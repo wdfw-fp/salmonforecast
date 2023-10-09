@@ -1,0 +1,15 @@
+Package: allsubsetspackagenew
+Title: A Comprehensive Tool for All Subsets Regression and Time Series Forecasting
+Version: 1.0.0
+Authors@R: Thomas Buehrens, Mark Sorel, Xiaotian Yuan
+Description: 
+    The `allsubsetspackagenew` package offers a robust set of functions designed for performing all subsets regression and time series forecasting on datasets that contain annual values of response and predictor covariates. This package equips data scientists and analysts with a wide array of tools for model selection, including a variety of statistical techniques and powerful visualization capabilities. Additionally, it provides utilities for efficiently handling time series data, making it an invaluable resource for both data analysis and forecasting tasks.
+License: MIT 
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Imports:
+  dplyr,
+  forecast,
+  testthat
+  
