@@ -1,0 +1,21 @@
+Package: arimaforecastpackagenew
+Title: ARIMA Forecast Package
+Version: 0.0.0.9000
+Authors@R: 
+    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: This package provides a set of tools for time series forecasting using ARIMA models. It includes the `arima_forecast` function, which allows users to perform time series forecasting with or without exogenous variables. The function provides point forecasts, prediction intervals, and model information.
+License: MIT
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Imports:
+  dplyr,
+  forecast,
+  stats,
+  foreach,
+  doParallel,
+  tidyverse,
+  lubridate,
+  conflicted
+
