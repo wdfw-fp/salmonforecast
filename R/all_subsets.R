@@ -60,7 +60,8 @@
 all_subsets <- function(series, covariates, min, max, type, fit = TRUE) {
   freq <- ifelse(type == "inseason", 2, 1)
   seasonal <- ifelse(type == "inseason", T, F)
-
+  library(dplyr)
+  library(forecast)
   series <- series %>%
     ungroup() %>%
     dplyr::select(year, species, period, abundance, all_of(covariates)) %>%
