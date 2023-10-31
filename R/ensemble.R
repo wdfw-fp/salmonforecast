@@ -1,3 +1,87 @@
+
+#' Function to calculate performance on a rolling window
+#'
+#' This function calculates the performance of a series of forecasts over a rolling (i.e., sliding) window.
+#'
+#' @param one_aheads a data frame containing forecasts
+#' @param series a data frame containing observations
+#' @param roll_years number of years within the rolling window
+#' @param mod_include number of top models to return in an output table
+#' @param TY_ensemble number of years of performance to look at when selecting top models to return in output table
+#' @param forecast_year the final year of forecasts, for which an observationis not available
+#'
+#' @return a list with three components
+#' @export
+#'
+rolling_perf<-function(one_aheads,series,roll_years=15,mod_include=5,TY_ensemble,forecast_year){
+
+  out<-one_aheads  %>%left_join(series %>% dplyr::select(year,abundance)) %>%
+    mutate(error=abundance-predicted_abundance,
+           APE=abs(error/abundance))%>%
+    arrange(model,year) %>%
+    group_by(model) %>%
+    mutate(MAPE= lag( 100*zoo::rollmean(APE, k = roll_years, fill = NA, align = "right"))) %>%
+    group_by(year) %>%
+    mutate(rank=rank(MAPE),
+           model=as.character(model))
+
+
+  #top performing models in each window
+  tops<-out%>%
+    filter(between(year,forecast_year-TY_ensemble+1,forecast_year),
+           rank<=mod_include) %>%
+    left_join(model_list) %>%
+    arrange(desc(year),rank) #%>% dplyr::select(-1)
+
+
+
+  # performance of best model
+  perf<-tops%>%
+    ungroup %>%
+    filter(rank==1) %>%
+    summarize(MAPE=mean(APE,na.rm=T)*100,
+              RMSE = sqrt(mean(error^2,na.rm=T)),
+              MSA = 100*(exp(mean(abs(log(abundance/predicted_abundance)),na.rm=T))-1))
+
+
+
+
+  return(list(
+    all_mods=out %>% ungroup(),
+    top_mods=tops %>% ungroup(),
+    performance=perf
+  ))
+}
+
+
+
+#' Calculate performance metrics of models
+#'
+#' @param forecasts dataframe of one-step-ahead forecasts
+#'
+#' @return a data frame with  performance metrics calculated for each model
+#' @export
+#'
+evaluate_forecasts2<-function(forecasts){
+  forecast_skill<-forecasts%>%
+    # left_join(observations,by=c("Year","runsize_obs"))%>%
+    dplyr::select(year,model,abundance,predicted_abundance)%>%
+    mutate(error=predicted_abundance-abundance)%>%
+    filter(!is.na(error))%>%
+    group_by(model)%>%
+    summarise(MAPE = mean(abs(error/abundance))*100,
+              RMSE = sqrt(mean(error^2)),
+              MSA = 100*(exp(mean(abs(log(abundance/predicted_abundance))))-1)
+    )%>%
+    arrange(MAPE)
+  return(forecast_skill)
+}
+
+
+
+
+
+
 #' Function to perform ensemble analysis
 #'
 #' This function takes forecasts, series, TY_ensemble, k, and slide as inputs and performs ensemble analysis.
@@ -10,10 +94,8 @@
 #'
 #' @return A list of results, including final_model_weights, forecast_skill, ensembles, and forecasts.
 #'
-#' @examples
 #' @import dplyr
 #' @import tidyr
-#' @import From scales percent
 #' @export
 ensemble<-function(forecasts,series,TY_ensemble,k,slide,num_models,stack_metric){
 
@@ -133,3 +215,5 @@ ensemble<-function(forecasts,series,TY_ensemble,k,slide,num_models,stack_metric)
   )
   return(results)
 }
+
+
