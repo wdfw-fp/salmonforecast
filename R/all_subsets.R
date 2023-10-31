@@ -124,39 +124,3 @@ all_subsets <- function(series, covariates, min, max, type, fit = TRUE) {
 }
 
 
-
-
-data <- read.csv("data/dat.csv")
-
-covariates <- c(
-  "lag1_log_JackOPI",
-  "lag1_log_SmAdj",
-  "lag1_NPGO",
-  "lag1_PDO",
-  "WSST_A",
-  "PDO.MJJ",
-  "MEI.OND",
-  "UWI.JAS",
-  "SST.AMJ",
-  "SSH.AMJ",
-  "UWI.SON"
-)
-
-min_covariates <- 0
-max_covariates <- 1
-forecast_type <- "preseason"
-
-results <- all_subsets(
-  series = data,
-  covariates = covariates,
-  min = min_covariates,
-  max = max_covariates,
-  type = forecast_type,
-  fit = TRUE
-)
-
-cat("Number of models:", length(results[[1]]), "\n")
-cat("Best model formula:", results[[2]]$formula[1], "\n")
-cat("AICc of the best model:", results[[2]]$AICc[1], "\n")
-
-
