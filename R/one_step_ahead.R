@@ -7,14 +7,6 @@
 #' @param TY_ensemble The ensemble method to use
 #' @param covariates Explanatory variables matrix for model fitting.
 #' @param first_forecast_period The first forecast period.
-#' @param plot_results A logical value indicating whether to plot the results.
-#' @param write_model_summaries A logical value indicating whether to write model summaries to a file.
-#' @param forecast_period_start_m The start month of the forecast period
-#' @param forecast_period_start_d The start day of the forecast period
-#' @param obs_period_2
-#' @param p1_covariates_only
-#' @param stack_metric
-#' @param k
 #'
 #' @return A list with forecast results including 'pred', 'CI', 'arma', and 'aicc'.
 #'
@@ -29,7 +21,6 @@
 #' @import forecast
 #' @import testthat
 #' @import stats
-#' @import base
 #' @import doParallel
 
 
@@ -38,22 +29,11 @@ one_step_ahead<-function(series,
                          leave_yrs,
                          TY_ensemble,
                          covariates,
-                         first_forecast_period,
-                         plot_results,
-                         write_model_summaries,
-                         forecast_period_start_m, #inclusive
-                         forecast_period_start_d, #inclusive
-                         obs_period_2,
-                         p1_covariates_only,
-                         stack_metric,
-                         k
+                         first_forecast_period
 ){
 
   start<-Sys.time()
 
-  if(write_model_summaries ==T){
-    write.table(NULL,"summary.txt")
-  }
 
   series<-series%>%
     ungroup()%>%
