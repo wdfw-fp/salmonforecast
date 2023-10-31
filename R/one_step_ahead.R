@@ -67,7 +67,6 @@ one_step_ahead<-function(series,
 
   exists1 =ifelse(is.na(series%>%dplyr::select(abundance)%>%tail(n=1)%>%pull()),1,0)
 
-  library(doParallel)
   cl <- makeCluster(parallel::detectCores()-3)
   registerDoParallel(cl)
   forecasts_out<- foreach::foreach(i=1:leave_yrs,.combine =  'rbind',.packages=c("tidyverse","forecast")) %dopar% {
