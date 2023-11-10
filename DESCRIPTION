@@ -1,0 +1,31 @@
+Package: SalmonForecasting
+Title: Forecast salmon returns
+Version: 0.0.0.9000
+Author: Mark Sorel [aut, cre], Thomas Buehrens [aut], Xiaotian Yuan [aut]
+Maintainer: Xiaotian Yuan <tjyuanxiaotian@gmail.com>
+Description: Provides a set of data analysis and forecasting tools for analyzing environmental and ecological data. The package includes functions for data manipulation, time series forecasting, and statistical analysis, making it a valuable resource for researchers in these fields.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Suggests:
+  testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Depends:
+  R (>= 2.10)
+Imports:
+    dplyr,
+    forecast,
+    doParallel,
+    lubridate,
+    foreach,
+    tidyr,
+    utils,
+    zoo,
+    tibble,
+    readr,
+    stats,
+    purrr,
+    MCMCpack,
+    scales
+LazyData: true
