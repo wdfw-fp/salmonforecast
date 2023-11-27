@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(Yuan)
+library(SalmonForecasting)
 
-test_check("Yuan")
+test_check("SalmonForecasting")
