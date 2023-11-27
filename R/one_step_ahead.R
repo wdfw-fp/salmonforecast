@@ -186,7 +186,8 @@ one_step_ahead <- function(series,
           predicted_abundance = pred,
           arma = temp$arma,
           aicc = temp$aicc)) %>%
-        left_join(CI, by = c("year", "period"))
+        left_join(CI, by = c("year", "period"))%>%
+                 dplyr::mutate(model = as.character(c))
 
       if (c == 1) {
         forecasts <- tdat
