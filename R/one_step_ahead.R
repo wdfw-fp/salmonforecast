@@ -131,12 +131,26 @@ one_step_ahead <- function(series,
   }
 
   # Filter the series based on covariates outside of the if_any
-  filtered_series <- series %>%
-    dplyr::ungroup() %>%
-    dplyr::select(year, species, period, abundance, all_of(covariates))
+  # filtered_series <- series %>%
+  #   dplyr::ungroup() %>%
+  #   dplyr::select(year, species, period, abundance, all_of(covariates))
+
+
+
+
+
+  filtered_series<-series%>%
+    ungroup()%>%
+    dplyr::select(year,species,period,abundance,all_of(unique(unlist(covariates))))%>%
+    filter(
+      dplyr::across(
+        .cols = all_of(unique(unlist(covariates))),
+        .fns = ~ !is.na(.x)
+      )
+    )
 
   # Determine if any covariate columns have NA values
-  has_na_covariates <- colSums(is.na(filtered_series[, covariates])) > 0
+  #has_na_covariates <- colSums(is.na(filtered_series[, covariates])) > 0
 
   #cl <- makeCluster(parallel::detectCores() - 3)
   cl <- makeCluster(2)  # Use 2 cores as an example, adjust as needed
