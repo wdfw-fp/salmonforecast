@@ -36,6 +36,12 @@ test_that("Test one_step_ahead function", {
   num_models <- 10
   rolling_year_window <- 15
 
+
+
+
+  best_covariates<-all_subsets(series=dat,covariates=covariates,min=min_vars,max=max_vars,type=forecast_type,fit=FALSE)
+
+
   # Load the libraries explicitly for the one_step_ahead function
   #library(doParallel)
   #library(dplyr)
@@ -47,7 +53,7 @@ test_that("Test one_step_ahead function", {
   results <- one_step_ahead(series = dat,  # Replace your_package_name
                             leave_yrs = leave_yrs,
                             TY_ensemble = TY_ensemble,
-                            covariates = covariates,  # Uncomment and adjust as needed
+                            covariates =best_covariates[[1]],  # Uncomment and adjust as needed
                             first_forecast_period = first_forecast_period,
                             plot_results = plot_results,
                             write_model_summaries = write_model_summaries,
