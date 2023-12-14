@@ -13,7 +13,7 @@ test_that("Test all_subsets function", {
   }
 
   # Set use_rda to TRUE to load from .rda file or FALSE to generate from Excel
-  use_rda <- TRUE
+  use_rda <- FALSE
   excel_path <- system.file("extdata", "SummerChinook.xlsx", package = "SalmonForecasting")
 
   # Call the function
