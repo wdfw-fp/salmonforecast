@@ -25,6 +25,7 @@
 
 #' @export
 rolling_perf <- function(one_aheads, series, roll_years, mod_include, TY_ensemble, model_list) {
+
   abundance <- series$abundance
   predicted_abundance <- one_aheads$predicted_abundance
   model <- one_aheads$model
@@ -48,12 +49,12 @@ rolling_perf <- function(one_aheads, series, roll_years, mod_include, TY_ensembl
     mutate(
       rank = rank(MAPE),
       model = as.character(model)
-    )
+    ) %>% dplyr::ungroup()
 
   tops <- out %>%
-    dplyr::filter(., dplyr::between(year, 2023 - TY_ensemble + 1, 2023), rank <= mod_include) %>%
+    dplyr::filter(., dplyr::between(year, max(year) - TY_ensemble + 1, max(year) ), rank <= mod_include) %>%
     dplyr::left_join(model_list, by = "model") %>%
-    dplyr::arrange(dplyr::desc(year), rank) %>% dplyr::select(-1)
+    dplyr::arrange(dplyr::desc(year), rank)
 
   # performance of the best model
   perf <- tops %>%
