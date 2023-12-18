@@ -1,68 +1,38 @@
-#' @name make_dat_from_excel
-#' @description Convert a brood table to a return table and scrape covariates from the web.
-#' @title Make dat from Excel
-#' @param excel_path Path to the Excel file.
-#' @param file_path Path to an existing file or NULL.
-#' @param redo Boolean indicating whether to remake the file.
+#' @name make_dat
+#' @description Scrape covariates from the web and add covariates to return table
+#' @title Make data
+#' @param dat1 input file with adult and jack returns by year. Must have three columns named 1) year, 2) abundance, and 2) Jack .
+#' @param covariates vector of covariates to include in the output
 #' @return A data frame with the processed data.
 #' @export
 #' @importFrom dplyr right_join add_tally across
 #' @importFrom readxl read_xlsx
 #' @import mgcv
 #' @importFrom magrittr %<>%
-make_dat_from_excel <- function(excel_path, file_path=NULL, redo=TRUE) {
-
-  # Convert a brood table to a return table
-  ## Useful if you have data in brood table format because it needs to be in return table format for the "make_dat_function
-  brood_to_return <- function(bt) {
-    bt %>%
-      group_by(Stock) %>%
-      pivot_longer(cols=contains("Age"), names_to="AgeNames", values_to="Return") %>%
-      mutate(Age=parse_number(AgeNames),
-             ReturnYear=BroodYear+Age) %>%
-      filter(!is.na(Return)) %>%
-      dplyr::select(Stock, ReturnYear, AgeNames, Return) %>%
-      pivot_wider(names_from=AgeNames, values_from=Return)
-  }
-
-
-  #scrape covariates and munge data
-  make_dat<-function(file_path=NULL, # path to look for existing file and save file
-                     redo=TRUE, # remake file if it esists at path?
-                     dat1 # input file with adult and jack returns by year. Must have three columns named 1) year, 2) abundance, and 2) Jack .
-
-
-  ){
+make_dat <- function(dat1,
+                                covariates=c(
+  #
+  "lag1_log_Jack"
+  ,"lag4_log_adults"
+  ,"lag5_log_adults"
+  ,"lag1_log_SAR" #snake river sockeye PIT SAR
+  ,"lag2_log_SAR" #snake river sockeye PIT SAR
+  ,"lag1_NPGO"
+  ,"lag1_PDO"
+  ,"lag2_NPGO"
+  ,"lag2_PDO"
+  # ,"WSST_A"
+  #NOAA Ocean Indicators
+  ,"lag2_PC1"
+  ,"lag2_PC2"
+  ,"lag2_sp_phys_trans"
+  ,"pink_ind"
+  ,"lag1_log_socksmolt" # sockeye smolts
+)) {
 
 
-    if (!is.null(file_path) && file_path != "" && file.exists(file_path) && !redo){ #does the file already exist at the path and there is not a command to redo it?
-      return(read_csv(file_path))
 
-    }else{
-
-
-      covariates=c(   #covariates to include in the output
-        #
-        "lag1_log_Jack"
-        # ,"lag1_log_age4"
-        ,"lag4_log_adults"
-        ,"lag5_log_adults"
-        ,"lag1_log_SAR" #snake river sockeye PIT SAR
-        ,"lag2_log_SAR" #snake river sockeye PIT SAR
-        ,"lag1_NPGO"
-        ,"lag1_PDO"
-        ,"lag2_NPGO"
-        ,"lag2_PDO"
-        # ,"WSST_A"
-        #NOAA Ocean Indicators
-        ,"lag2_PC1"
-        ,"lag2_PC2"
-        ,"lag2_sp_phys_trans"
-        ,"pink_ind"
-        ,"lag1_log_socksmolt" # sockeye smolts
-      )
-
-
+    #scrape covariates and munge data
       #add any missing years in the input to the output (with NAs in the values) because ARIMA models assume that the years are consecutive.
 
       Yrlist<-data.frame(year=c(min(dat1$year):(max(dat1$year)+1)))
@@ -237,43 +207,29 @@ make_dat_from_excel <- function(excel_path, file_path=NULL, redo=TRUE) {
 
 
 
-      try(write_csv(dat,file=file_path),silent=T)
       return(dat)
     }
-  }
-
-  # Read data from Excel file
-  up_sum_chk <- readxl::read_xlsx(excel_path, sheet = 1) #%>%
-    # brood_to_return() %>%
-    # mutate(abundance = Age4 + Age5 + Age6) %>%
-    # dplyr::select(year = ReturnYear, abundance, Age4, Jack = Age3) %>%
-    # arrange(year)
-  # Check if 'BroodYear' column exists in the Excel file
-  if ("BroodYear" %in% colnames(up_sum_chk)) {
-    # If 'BroodYear' exists, apply 'brood_to_return' function
-    up_sum_chk <- up_sum_chk %>%
-      brood_to_return() %>%
-      mutate(abundance = Age4 + Age5 + Age6) %>%
-      dplyr::select(year = ReturnYear, abundance, Age4, Jack = Age3) %>%
-      arrange(year)
-  } else {
-    # If 'BroodYear' does not exist, use the original column names
-    up_sum_chk <- up_sum_chk %>%
-      mutate(abundance = Age4 + Age5 + Age6) %>%
-      dplyr::select(year, abundance, Age4, Jack = Age3) %>%
-      arrange(year)
-    # Rename the 'year' column to 'ReturnYear' to maintain consistency
-    colnames(up_sum_chk)[colnames(up_sum_chk) == "year"] <- "ReturnYear"
-  }
 
 
-  # Use the existing make_dat function to process data
-  if (is.null(file_path)) {
-    dat <- make_dat(dat1 = up_sum_chk, redo = redo)
-  } else {
-    dat <- make_dat(file_path = file_path, redo = redo, dat1 = up_sum_chk)
-  }
 
-  return(dat)
+
+#' @name brood_to_return
+#' @Title Convert a brood table to a return table
+#'
+#' @param bt brood table data frame
+#' @description Useful if you have data in brood table format because it needs to be in return table format for the "make_dat_function
+#' @return returns a "return table" data frame
+#' @export
+#'
+#' @examples
+brood_to_return <- function(bt) {
+  bt %>%
+    group_by(Stock) %>%
+    pivot_longer(cols=contains("Age"), names_to="AgeNames", values_to="Return") %>%
+    mutate(Age=parse_number(AgeNames),
+           ReturnYear=BroodYear+Age) %>%
+    filter(!is.na(Return)) %>%
+    dplyr::select(Stock, ReturnYear, AgeNames, Return) %>%
+    pivot_wider(names_from=AgeNames, values_from=Return)
 }
 
