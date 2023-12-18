@@ -2,9 +2,10 @@
 
 export(all_subsets)
 export(arima_forecast)
+export(brood_to_return)
 export(ensemble)
 export(find_stack_weights)
-export(make_dat_from_excel)
+export(make_dat)
 export(one_step_ahead)
 export(rolling_perf)
 import(doParallel)
