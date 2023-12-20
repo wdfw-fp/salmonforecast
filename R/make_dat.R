@@ -1,8 +1,8 @@
 #' @name make_dat
 #' @description Scrape covariates from the web and add covariates to return table
 #' @title Make data
-#' @param dat1 input file with adult and jack returns by year. Must have three columns named 1) year, 2) abundance, and 2) Jack .
-#' @param covariates vector of covariates to include in the output
+#' @param dat1 Input file with adult and jack returns by year.
+#' @param covariates Vector of covariates to include in the output.
 #' @return A data frame with the processed data.
 #' @export
 #' @importFrom dplyr right_join add_tally across
@@ -214,14 +214,12 @@ make_dat <- function(dat1,
 
 
 #' @name brood_to_return
-#' @Title Convert a brood table to a return table
+#' @title Convert a brood table to a return table
 #'
-#' @param bt brood table data frame
-#' @description Useful if you have data in brood table format because it needs to be in return table format for the "make_dat_function
-#' @return returns a "return table" data frame
+#' @param bt Brood table data frame.
+#' @description Useful if you have data in brood table format because it needs to be in return table format for the "make_dat_function.
+#' @return Returns a "return table" data frame.
 #' @export
-#'
-#' @examples
 brood_to_return <- function(bt) {
   bt %>%
     group_by(Stock) %>%
