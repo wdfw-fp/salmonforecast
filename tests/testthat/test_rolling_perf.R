@@ -33,7 +33,7 @@ test_that("Test rolling performance function", {
   }
 
   # Set use_rda to TRUE to load from .rda file or FALSE to generate from Excel
-  use_rda <- FALSE
+  use_rda <- TRUE
   excel_path <- system.file("data", "SummerChinook.xlsx", package = "SalmonForecasting")
 
   # Call the function
