@@ -1,3 +1,31 @@
+#' Perform Forecasting with Ensemble Models
+#'
+#' This function conducts time series forecasting using ensemble models.
+#' @name do_forecast
+#' @title Perform Forecasting with Ensemble Models
+#' @param covariates A vector specifying the covariates to be considered in the forecasting models.
+#' @param leave_yrs Number of years to leave out for model validation.
+#' @param TY_ensemble Number of models in the ensemble.
+#' @param first_forecast_period The starting period for making forecasts.
+#' @param plot_results Logical, indicating whether to plot forecast results.
+#' @param write_model_summaries Logical, indicating whether to write model summaries.
+#' @param forecast_period_start_m Starting month of the forecast period (inclusive).
+#' @param forecast_period_start_d Starting day of the forecast period (inclusive).
+#' @param stack_metric The metric used for stacking models in the ensemble.
+#' @param k Number of top models to include in the ensemble.
+#' @param min_vars Minimum number of covariates in a model.
+#' @param max_vars Maximum number of covariates in a model.
+#' @param forecast_type Type of forecasting approach ("preseason" or other).
+#' @param rolling_year_window Number of years for rolling performance calculation.
+#' @param num_models Number of top models to consider in ensemble creation.
+#'
+#' @return A list containing tables and plots summarizing the forecasting results and a list containing various outputs, including selected covariates, forecast results, rolling performance, ensemble models, and plots/tables.
+#'
+#' @importFrom dplyr mutate group_by %>%
+#' @import ggplot2
+#' @export
+#'
+
 #function to do forecast and return plots
 
 do_forecast<-function(
@@ -80,13 +108,15 @@ do_forecast<-function(
   #plot and table
  plots_and_tables<- plot_table(
    rp=rp,
-   ens=ens
+   ens=ens,
+   stack_metric=stack_metric,
+   rolling_year_window=rolling_year_window
   )
-
-  return (best_covariates=best_covariates,
-          results=results,
-          rp=rp,
-          ens2=ens2,
-          plots_and_tables=plots_and_tables
-          )
+ return = plots_and_tables
+  # return (best_covariates=best_covariates,
+  #         results=results,
+  #         rp=rp,
+  #         ens2=ens2,
+  #         plots_and_tables=plots_and_tables
+  #         )
 }
