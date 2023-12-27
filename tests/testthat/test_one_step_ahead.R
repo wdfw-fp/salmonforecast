@@ -30,7 +30,7 @@ test_that("Test one_step_ahead function", {
     return(dat)
   }
   # Set use_rda to TRUE to load from .rda file or FALSE to generate from Excel
-  use_rda <- FALSE
+  use_rda <- TRUE
   excel_path <- system.file("data", "SummerChinook.xlsx", package = "SalmonForecasting")
 
   # Call the function
