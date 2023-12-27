@@ -30,5 +30,8 @@ Imports:
     MCMCpack,
     scales,
     mgcv,
-    magrittr
+    magrittr,
+    knitr,
+    kableExtra,
+    ggplot2
 LazyData: true
