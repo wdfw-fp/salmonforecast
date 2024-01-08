@@ -60,24 +60,24 @@ do_forecast<-function(
     num_models=10
 
 
-  ){
+){
 
   #find all subsets
   best_covariates<-all_subsets(series=dat,covariates=covariates,min=min_vars,max=max_vars,type=forecast_type,fit=FALSE)
 
   #generate one step ahead forecasts
   results<-one_step_ahead(series=dat,
-                                             leave_yrs=leave_yrs,
-                                             TY_ensemble=TY_ensemble,
-                                             covariates=
-                                               best_covariates[[1]],
-                                             first_forecast_period = first_forecast_period,
-                                             plot_results = plot_results,
-                                             write_model_summaries = write_model_summaries,
-                                             forecast_period_start_m =  forecast_period_start_m, #inclusive
-                                             forecast_period_start_d =  forecast_period_start_d, #inclusive
-                                             stack_metric = stack_metric,
-                                             k=k
+                          leave_yrs=leave_yrs,
+                          TY_ensemble=TY_ensemble,
+                          covariates=
+                            best_covariates[[1]],
+                          first_forecast_period = first_forecast_period,
+                          plot_results = plot_results,
+                          write_model_summaries = write_model_summaries,
+                          forecast_period_start_m =  forecast_period_start_m, #inclusive
+                          forecast_period_start_d =  forecast_period_start_d, #inclusive
+                          stack_metric = stack_metric,
+                          k=k
   )
 
 
@@ -91,33 +91,33 @@ do_forecast<-function(
 
   # rolling performance / ensemble
   rp<-rolling_perf(one_aheads=results,
-                                      series=dat,
-                                      roll_years = rolling_year_window,
-                                      mod_include = 10,
-                                      TY_ensemble = TY_ensemble,
-                                      model_list = model_list)
+                   series=dat,
+                   roll_years = rolling_year_window,
+                   mod_include = 10,
+                   TY_ensemble = TY_ensemble,
+                   model_list = model_list)
 
 
   ens<-ensemble(forecasts=(rp$all_mods %<>% dplyr::group_by(year) %>% dplyr::mutate(rank=rank(MAPE)) %>% dplyr::ungroup()),
-                                    series=dat,
-                                    TY_ensemble=TY_ensemble,
-                                    k=k,
-                                    slide=15,
-                                    num_models=num_models,
-                                    stack_metric="MAPE")
+                series=dat,
+                TY_ensemble=TY_ensemble,
+                k=k,
+                slide=15,
+                num_models=num_models,
+                stack_metric="MAPE")
   #plot and table
- plots_and_tables<- plot_table(
-   rp=rp,
-   ens=ens,
-   stack_metric=stack_metric,
-   rolling_year_window=rolling_year_window
+  plots_and_tables<- plot_table(
+    rp=rp,
+    ens=ens,
+    stack_metric=stack_metric,
+    rolling_year_window=rolling_year_window
   )
- #return = plots_and_tables
- return(list(
-   best_covariates = best_covariates,
-   results = results,
-   rp = rp,
-   plots_and_tables = plots_and_tables
- ))
+  #return = plots_and_tables
+  return(list(
+    best_covariates = best_covariates,
+    results = results,
+    rp = rp,
+    plots_and_tables = plots_and_tables
+  ))
 
 }
