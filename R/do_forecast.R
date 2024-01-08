@@ -112,11 +112,12 @@ do_forecast<-function(
    stack_metric=stack_metric,
    rolling_year_window=rolling_year_window
   )
- return = plots_and_tables
-  # return (best_covariates=best_covariates,
-  #         results=results,
-  #         rp=rp,
-  #         ens2=ens2,
-  #         plots_and_tables=plots_and_tables
-  #         )
+ #return = plots_and_tables
+ return(list(
+   best_covariates = best_covariates,
+   results = results,
+   rp = rp,
+   plots_and_tables = plots_and_tables
+ ))
+
 }
