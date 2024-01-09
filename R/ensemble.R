@@ -15,31 +15,30 @@
 #' @importFrom dplyr summarise filter left_join select mutate group_by arrange bind_rows ungroup pull
 #' @importFrom MCMCpack rdirichlet
 #' @export
-ensemble <- function(forecasts, series, TY_ensemble, k, slide,num_models,stack_metric) {
+ensemble <- function(forecasts, series, TY_ensemble, k, slide, num_models, stack_metric) {
   abundance <- series$abundance
   predicted_abundance <- forecasts$predicted_abundance
   model <- forecasts$model
   error = abundance - predicted_abundance
   APE = abs(error / abundance)
-  MAPE=NULL
-  MSA_weight=NULL
-  Stacking_weight=NULL
-  abundance.x=NULL
-  MSA=NULL
-  RMSE=NULL
-  value=NULL
-  RMSE_weight=NULL
-  MAPE_weight=NULL
-  Parameter=NULL
-  MSA_weighted=NULL
-  RMSE_weighted=NULL
-  MAPE_weighted=NULL
-  Stack_weighted=NULL
+  MAPE = NULL
+  MSA_weight = NULL
+  Stacking_weight = NULL
+  abundance.x = NULL
+  MSA = NULL
+  RMSE = NULL
+  value = NULL
+  RMSE_weight = NULL
+  MAPE_weight = NULL
+  Parameter = NULL
+  MSA_weighted = NULL
+  RMSE_weighted = NULL
+  MAPE_weighted = NULL
+  Stack_weighted = NULL
 
   yrrange <- forecasts %>%
     dplyr::summarise(minyr = min(year), maxyr = max(year)) %>%
     unlist()
-
 
   maxdata_year <- forecasts %>%
     dplyr::filter(!is.na(abundance)) %>%
@@ -72,7 +71,6 @@ ensemble <- function(forecasts, series, TY_ensemble, k, slide,num_models,stack_m
                     RMSE_weight = (1 / RMSE)^k / sum((1 / RMSE)^k),
                     MAPE_weight = (1 / MAPE)^k / sum((1 / MAPE)^k)
       )
-
 
     modelcnt <- num_models
 
@@ -132,38 +130,66 @@ ensemble <- function(forecasts, series, TY_ensemble, k, slide,num_models,stack_m
                           values_to = "value") %>%
       tidyr::pivot_wider(id_cols = c("year", "model"), names_from = Parameter, values_from = value)
 
+    # Add "Best individual" rows with correct performance metrics
+    tdat2 <- dplyr::bind_rows(
+      tdat2,
+      forecasts %>%
+        dplyr::filter(
+          model %in% c(forecasts %>%
+                         dplyr::filter(year == i + 1, rank <= num_models) %>%
+                         dplyr::pull(model))
+        ) %>%
+        dplyr::filter(year == max(years) + 1) %>%
+        dplyr::mutate(model = "Best individual") %>%
+        dplyr::group_by(year, model) %>%
+        dplyr::summarise(
+          MSA_weighted = mean(MSA_weight, na.rm = TRUE),
+          RMSE_weighted = mean(RMSE_weight, na.rm = TRUE),
+          MAPE_weighted = mean(MAPE_weight, na.rm = TRUE),
+          Stack_weighted = mean(Stacking_weight, na.rm = TRUE)
+        )
+    )
+
     ensembles <- dplyr::bind_rows(ensembles, tdat2)
   }
 
-  #function to evaluate forecast skill ()
-  evaluate_forecasts2<-function(forecasts,observations){
-    forecast_skill<-forecasts%>%
+  # function to evaluate forecast skill ()
+  evaluate_forecasts2 <- function(forecasts, observations) {
+    forecast_skill <- forecasts %>%
       # left_join(observations,by=c("Year","runsize_obs"))%>%
-      dplyr::select(year,model,abundance,predicted_abundance)%>%
-      dplyr::mutate(error=predicted_abundance-abundance)%>%
-      dplyr::filter(!is.na(error))%>%
-      dplyr::group_by(model)%>%
-      dplyr::summarise(MAPE = mean(abs(error/abundance))*100,
-                RMSE = sqrt(mean(error^2)),
-                MSA = 100*(exp(mean(abs(log(abundance/predicted_abundance))))-1)
-      )%>%
-      arrange(MAPE)
+      dplyr::select(year, model, abundance, predicted_abundance) %>%
+      dplyr::mutate(error = predicted_abundance - abundance) %>%
+      dplyr::filter(!is.na(error)) %>%
+      dplyr::group_by(model) %>%
+      dplyr::summarise(
+        MAPE = mean(abs(error / abundance)) * 100,
+        RMSE = sqrt(mean(error^2)),
+        MSA = 100 * (exp(mean(abs(log(abundance / predicted_abundance)))) - 1)
+      ) %>%
+      dplyr::arrange(MAPE)
     return(forecast_skill)
   }
 
-
-  forecast_skill <- evaluate_forecasts2(forecasts = dplyr::bind_rows(forecasts, ensembles %>%
-                                                                       dplyr::left_join(series)) %>%
-                                          dplyr::filter(year > (yrrange[2] - TY_ensemble))
-                                        ,
-                                        observations = series)
+  forecast_skill <- evaluate_forecasts2(
+    forecasts = dplyr::bind_rows(forecasts, ensembles %>%
+                                   dplyr::left_join(series)) %>%
+      dplyr::filter(year > (yrrange[2] - TY_ensemble)),
+    observations = series
+  )
 
   forecasts2 <- dplyr::bind_rows(forecasts, ensembles %>% dplyr::left_join(series)) %>%
     dplyr::filter(year > (yrrange[2] - TY_ensemble)) %>%
     dplyr::mutate(error = predicted_abundance - abundance,
                   pct_error = scales::percent(error / abundance)
     ) %>%
-    dplyr::left_join(tdat %>% dplyr::select(model, Stacking_weight))
+    # dplyr::left_join(tdat %>% dplyr::select(model, Stacking_weight))
+    dplyr::left_join(tdat %>% dplyr::select(model, Stacking_weight)) %>%
+    dplyr::group_by(model) %>%
+    dplyr::summarize(
+      performance_metrics = calculate_performance_metrics(predicted_abundance, abundance),
+      Stacking_weight = mean(Stacking_weight, na.rm = TRUE)
+    ) %>%
+    dplyr::ungroup()
 
   results <- list(
     final_model_weights = tdat,
