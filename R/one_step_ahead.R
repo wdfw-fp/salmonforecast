@@ -110,6 +110,15 @@ one_step_ahead <- function(series,
             forecasts <- forecasts %>% dplyr::bind_rows(tdat)
           }
 
+
+          # Calculate performance metrics using the new function
+          performance_metrics <- calculate_performance_metrics(pred, tdat$abundance)
+
+          # Append performance metrics to the data frame
+          tdat <- tdat %>%
+            dplyr::bind_cols(performance_metrics)
+
+
         }, error = function(e) {
           # Handle errors (e.g., model not suitable)
           print(paste("Error in ARIMA model for covariate", c, "- Skipping:", e$message))
