@@ -63,6 +63,15 @@ arima_forecast <- function(tdat, xreg, xreg_pred, last_train_yr, first_forecast_
           dplyr::select() %>%
           dplyr::mutate(year = last_train_yr + 1, period = 1)
       }
+
+
+      # Calculate performance metrics using the new function
+      performance_metrics <- calculate_performance_metrics(pred, tdat$abundance)
+
+      # Append performance metrics to the data frame
+      tdat <- tdat %>%
+        dplyr::bind_cols(performance_metrics)
+
       return(list(pred = pred, CI = CI, arma = paste(m1$arma, collapse = ""), aicc = m1$aicc))
       if (write_model_summaries == TRUE) {
         sink("summary.txt", append = TRUE)
