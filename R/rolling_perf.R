@@ -31,7 +31,7 @@ rolling_perf <- function(one_aheads, series, roll_years, mod_include, TY_ensembl
   model <- one_aheads$model
   error = abundance - predicted_abundance
   APE = abs(error / abundance)
-  MAPE=NULL
+  MAPE = NULL
   .=NULL
 
   out <- one_aheads %>%
@@ -52,18 +52,27 @@ rolling_perf <- function(one_aheads, series, roll_years, mod_include, TY_ensembl
     ) %>% dplyr::ungroup()
 
   tops <- out %>%
-    dplyr::filter(., dplyr::between(year, max(year) - TY_ensemble + 1, max(year) ), rank <= mod_include) %>%
+    dplyr::filter(., dplyr::between(year, max(year) - TY_ensemble + 1, max(year)), rank <= mod_include) %>%
     dplyr::left_join(model_list, by = "model") %>%
     dplyr::arrange(dplyr::desc(year), rank)
 
-  # performance of the best model
+  # # performance of the best model
+  # perf <- tops %>%
+  #   dplyr::ungroup() %>%
+  #   dplyr::filter(rank == 1) %>%
+  #   dplyr::summarize(
+  #     MAPE = mean(APE, na.rm = TRUE) * 100,
+  #     RMSE = sqrt(mean(error^2, na.rm = TRUE)),
+  #     MSA = 100 * (exp(mean(abs(log(abundance / predicted_abundance)), na.rm = TRUE)) - 1)
+  #   )
+
+  # Use the new function for performance metrics calculation
   perf <- tops %>%
     dplyr::ungroup() %>%
     dplyr::filter(rank == 1) %>%
+    dplyr::group_by(model) %>%
     dplyr::summarize(
-      MAPE = mean(APE, na.rm = TRUE) * 100,
-      RMSE = sqrt(mean(error^2, na.rm = TRUE)),
-      MSA = 100 * (exp(mean(abs(log(abundance / predicted_abundance)), na.rm = TRUE)) - 1)
+      performance_metrics = calculate_performance_metrics(predicted_abundance, abundance)
     )
 
   return(list(
