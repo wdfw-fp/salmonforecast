@@ -93,11 +93,11 @@ plot_table<-function(
   ylim(0,NA)+
   scale_x_continuous(breaks=unique(results_best$year))+
   theme(legend.position = "none")+
-  ylab("Ocean abundance")+xlab("")+
+  ylab("Abundance")+xlab("")+
   theme(legend.key.size=unit(.15,'cm'),legend.position = "top")
 
 
-  Figure3<-ggplot((results_best ) %>% mutate(Model=sub("_"," ",model_name)) %>%  mutate(pct_error=log10(((predicted_abundance-abundance)/abundance)+1)) %>% filter(year<2023),
+  Figure3<-ggplot((results_best ) %>% mutate(Model=sub("_"," ",model_name)) %>%  mutate(pct_error=log10(((predicted_abundance-abundance)/abundance)+1)) ,
                   aes(x=year,y=pct_error,color=Model))+geom_hline(yintercept=0)+geom_line(lwd=1.25)+scale_color_manual(values=c("darkblue","darkred"))+xlab("")+ylab(expression(paste(log[10], "(% error +1)")))
 
   kableExtra::save_kable(Table2, file.path(output_path, "Table2.html"))
@@ -114,7 +114,8 @@ return(
     Table3=Table3,
     Table4=Table4,
     Figure1=Figure1,
-    Figure2=Figure2
+    Figure2=Figure2,
+    Figure3=Figure3
   )
 )
 
