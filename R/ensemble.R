@@ -16,25 +16,6 @@
 #' @importFrom MCMCpack rdirichlet
 #' @export
 ensemble <- function(forecasts, series, TY_ensemble, k, slide, num_models, stack_metric) {
-  abundance <- series$abundance
-  predicted_abundance <- forecasts$predicted_abundance
-  model <- forecasts$model
-  error = abundance - predicted_abundance
-  APE = abs(error / abundance)
-  MAPE = NULL
-  MSA_weight = NULL
-  Stacking_weight = NULL
-  abundance.x = NULL
-  MSA = NULL
-  RMSE = NULL
-  value = NULL
-  RMSE_weight = NULL
-  MAPE_weight = NULL
-  Parameter = NULL
-  MSA_weighted = NULL
-  RMSE_weighted = NULL
-  MAPE_weighted = NULL
-  Stack_weighted = NULL
 
   yrrange <- forecasts %>%
     dplyr::summarise(minyr = min(year), maxyr = max(year)) %>%
@@ -130,25 +111,25 @@ ensemble <- function(forecasts, series, TY_ensemble, k, slide, num_models, stack
                           values_to = "value") %>%
       tidyr::pivot_wider(id_cols = c("year", "model"), names_from = Parameter, values_from = value)
 
-    # Add "Best individual" rows with correct performance metrics
-    tdat2 <- dplyr::bind_rows(
-      tdat2,
-      forecasts %>%
-        dplyr::filter(
-          model %in% c(forecasts %>%
-                         dplyr::filter(year == i + 1, rank <= num_models) %>%
-                         dplyr::pull(model))
-        ) %>%
-        dplyr::filter(year == max(years) + 1) %>%
-        dplyr::mutate(model = "Best individual") %>%
-        dplyr::group_by(year, model) %>%
-        dplyr::summarise(
-          MSA_weighted = mean(MSA_weight, na.rm = TRUE),
-          RMSE_weighted = mean(RMSE_weight, na.rm = TRUE),
-          MAPE_weighted = mean(MAPE_weight, na.rm = TRUE),
-          Stack_weighted = mean(Stacking_weight, na.rm = TRUE)
-        )
-    )
+    # # Add "Best individual" rows with correct performance metrics
+    # tdat2 <- dplyr::bind_rows(
+    #   tdat2,
+    #   forecasts %>%
+    #     dplyr::filter(
+    #       model %in% c(forecasts %>%
+    #                      dplyr::filter(year == i + 1, rank <= num_models) %>%
+    #                      dplyr::pull(model))
+    #     ) %>%
+    #     dplyr::filter(year == max(years) + 1) %>%
+    #     dplyr::mutate(model = "Best individual") %>%
+        # dplyr::group_by(year, model) %>%
+        # dplyr::summarise(
+        #   MSA_weighted = mean(MSA_weight, na.rm = TRUE),
+        #   RMSE_weighted = mean(RMSE_weight, na.rm = TRUE),
+        #   MAPE_weighted = mean(MAPE_weight, na.rm = TRUE),
+        #   Stack_weighted = mean(Stacking_weight, na.rm = TRUE)
+        # )
+    # )
 
     ensembles <- dplyr::bind_rows(ensembles, tdat2)
   }
@@ -189,7 +170,7 @@ ensemble <- function(forecasts, series, TY_ensemble, k, slide, num_models, stack
       performance_metrics = calculate_performance_metrics(predicted_abundance, abundance),
       Stacking_weight = mean(Stacking_weight, na.rm = TRUE)
     ) %>%
-    dplyr::ungroup()
+    dplyr::ungroup() %>% unpack(cols=performance_metrics)
 
   results <- list(
     final_model_weights = tdat,
