@@ -26,14 +26,6 @@
 #' @export
 rolling_perf <- function(one_aheads, series, roll_years, mod_include, TY_ensemble, model_list) {
 
-  abundance <- series$abundance
-  predicted_abundance <- one_aheads$predicted_abundance
-  model <- one_aheads$model
-  error = abundance - predicted_abundance
-  APE = abs(error / abundance)
-  MAPE = NULL
-  .=NULL
-
   out <- one_aheads %>%
     left_join(series %>% dplyr::select(year, abundance)) %>%
     mutate(
@@ -56,7 +48,7 @@ rolling_perf <- function(one_aheads, series, roll_years, mod_include, TY_ensembl
     dplyr::left_join(model_list, by = "model") %>%
     dplyr::arrange(dplyr::desc(year), rank)
 
-  # # performance of the best model
+  # performance of the best model
   # perf <- tops %>%
   #   dplyr::ungroup() %>%
   #   dplyr::filter(rank == 1) %>%
@@ -70,10 +62,10 @@ rolling_perf <- function(one_aheads, series, roll_years, mod_include, TY_ensembl
   perf <- tops %>%
     dplyr::ungroup() %>%
     dplyr::filter(rank == 1) %>%
-    dplyr::group_by(model) %>%
     dplyr::summarize(
       performance_metrics = calculate_performance_metrics(predicted_abundance, abundance)
-    )
+    ) %>%
+    unpack(cols=performance_metrics)
 
   return(list(
     all_mods = out %>% dplyr::ungroup(),
