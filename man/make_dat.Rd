@@ -12,9 +12,9 @@ make_dat(
 )
 }
 \arguments{
-\item{dat1}{Input file with adult and jack returns by year.}
+\item{dat1}{Input file with fields called "year", "abundance", and "Jack"}
 
-\item{covariates}{Vector of covariates to include in the output.}
+\item{covariates}{Vector of covariate names to include in the output. Options are:"lag1_log_Jack", "lag4_log_adults", "lag5_log_adults", "lag1_log_SAR","lag2_log_SAR", "lag1_NPGO", "lag1_PDO", "lag2_NPGO", "lag2_PDO", "lag2_PC1","lag2_PC2", "lag2_sp_phys_trans", "pink_ind", and "lag1_log_socksmolt", where the "SAR" covariates are sockeye SARs from PIT tags}
 }
 \value{
 A data frame with the processed data.
