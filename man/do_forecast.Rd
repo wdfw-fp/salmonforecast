@@ -2,12 +2,13 @@
 % Please edit documentation in R/do_forecast.R
 \name{do_forecast}
 \alias{do_forecast}
-\title{Perform Forecasting with Ensemble Models}
+\title{Perform Forecasting with Ensemble Models
+#' @param dat data frame with columns "year", "species", "period", "abundance", and the covariates included in the covariates argument}
 \usage{
 do_forecast(
+  dat,
   covariates = c("lag1_log_JackOPI", "lag1_log_SmAdj", "lag1_NPGO", "lag1_PDO", "WSST_A",
     "PDO.MJJ", "MEI.OND", "UWI.JAS", "SST.AMJ", "SSH.AMJ", "UWI.SON"),
-  leave_yrs = 31,
   TY_ensemble = 16,
   first_forecast_period = 1,
   plot_results = FALSE,
@@ -19,16 +20,13 @@ do_forecast(
   min_vars = 0,
   max_vars = 1,
   forecast_type = "preseason",
-  rolling_year_window = 15,
   num_models = 10
 )
 }
 \arguments{
 \item{covariates}{A vector specifying the covariates to be considered in the forecasting models.}
 
-\item{leave_yrs}{Number of years to leave out for model validation.}
-
-\item{TY_ensemble}{Number of models in the ensemble.}
+\item{TY_ensemble}{number of years ti evaluate performance based on plus 1.}
 
 \item{first_forecast_period}{The starting period for making forecasts.}
 
@@ -49,8 +47,6 @@ do_forecast(
 \item{max_vars}{Maximum number of covariates in a model.}
 
 \item{forecast_type}{Type of forecasting approach ("preseason" or other).}
-
-\item{rolling_year_window}{Number of years for rolling performance calculation.}
 
 \item{num_models}{Number of top models to consider in ensemble creation.}
 }
