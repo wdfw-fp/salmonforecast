@@ -5,6 +5,7 @@
 #'
 #' @param rp Rolling performance data.
 #' @param ens Ensemble model data.
+#' @param dat the input data with columns "year" and "abundance"
 #'
 #' @return A list containing tables and plots summarizing the forecasting results.
 #'
@@ -18,6 +19,7 @@
 plot_table<-function(
     rp,
     ens,
+    dat,
     stack_metric,
     rolling_year_window,
     output_path = "outputs"
@@ -100,13 +102,13 @@ plot_table<-function(
   Figure3<-ggplot((results_best ) %>% mutate(Model=sub("_"," ",model_name)) %>%  mutate(pct_error=log10(((predicted_abundance-abundance)/abundance)+1)) ,
                   aes(x=year,y=pct_error,color=Model))+geom_hline(yintercept=0)+geom_line(lwd=1.25)+scale_color_manual(values=c("darkblue","darkred"))+xlab("")+ylab(expression(paste(log[10], "(% error +1)")))
 
-  kableExtra::save_kable(Table2, file.path(output_path, "Table2.html"))
-  kableExtra::save_kable(Table3, file.path(output_path, "Table3.html"))
-  kableExtra::save_kable(Table4, file.path(output_path, "Table4.html"))
-
-  ggsave(file.path(output_path, "Figure1.png"), Figure1, width = 8, height = 6)
-  ggsave(file.path(output_path, "Figure2.png"), Figure2, width = 8, height = 6)
-  ggsave(file.path(output_path, "Figure3.png"), Figure3, width = 8, height = 6)
+  # kableExtra::save_kable(Table2, file.path(output_path, "Table2.html"))
+  # kableExtra::save_kable(Table3, file.path(output_path, "Table3.html"))
+  # kableExtra::save_kable(Table4, file.path(output_path, "Table4.html"))
+  #
+  # ggsave(file.path(output_path, "Figure1.png"), Figure1, width = 8, height = 6)
+  # ggsave(file.path(output_path, "Figure2.png"), Figure2, width = 8, height = 6)
+  # ggsave(file.path(output_path, "Figure3.png"), Figure3, width = 8, height = 6)
 
 return(
   list(
