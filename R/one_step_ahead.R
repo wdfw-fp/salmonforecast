@@ -36,9 +36,7 @@ one_step_ahead <- function(series,
                            stack_metric,
                            k
 ) {
-  species <- "Coho"
-  abundance <- series$abundance
-  train_test<-series$train_test
+
 
   start <- Sys.time()
 
