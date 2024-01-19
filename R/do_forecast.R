@@ -64,7 +64,7 @@ do_forecast<-function(
 
 ){
 
-  leave_yrs<-(TY_ensemble-1)*2+1
+  leave_yrs<-TY_ensemble+slide
 
 
   #find all subsets
