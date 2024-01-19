@@ -21,7 +21,8 @@ do_forecast(
   min_vars = 0,
   max_vars = 1,
   forecast_type = "preseason",
-  num_models = 10
+  num_models = 10,
+  n_cores = 2
 )
 }
 \arguments{
@@ -52,6 +53,8 @@ do_forecast(
 \item{forecast_type}{Type of forecasting approach ("preseason" or other).}
 
 \item{num_models}{Number of top models to consider in ensemble creation.}
+
+\item{n_cores}{number of cores to use in parallel computing}
 }
 \value{
 A list containing tables and plots summarizing the forecasting results and a list containing various outputs, including selected covariates, forecast results, rolling performance, ensemble models, and plots/tables.
