@@ -6,7 +6,6 @@
 #' #' @param dat data frame with columns "year", "species", "period", "abundance", and the covariates included in the covariates argument
 #' @param covariates A vector specifying the covariates to be considered in the forecasting models.
 #' @param TY_ensemble number of years ti evaluate performance based on plus 1.
-#' @param slide The length of the sliding window for calculating ensemble weights
 #' @param first_forecast_period The starting period for making forecasts.
 #' @param plot_results Logical, indicating whether to plot forecast results.
 #' @param write_model_summaries Logical, indicating whether to write model summaries.
@@ -47,7 +46,6 @@ do_forecast<-function(
 
 
     TY_ensemble=16,
-    slide=15,
     first_forecast_period = 1,
     plot_results = FALSE,
     write_model_summaries = TRUE,
@@ -107,7 +105,7 @@ do_forecast<-function(
                 series=dat,
                 TY_ensemble=TY_ensemble,
                 k=k,
-                slide=slide,
+                slide=TY_ensemble-1,
                 num_models=num_models,
                 stack_metric="MAPE")
   #plot and table

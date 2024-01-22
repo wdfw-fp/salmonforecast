@@ -5,7 +5,7 @@
 #' @param series A data frame containing observed time series data.
 #' @param TY_ensemble The number of years to consider for ensemble generation.
 #' @param k A parameter for weighting in the ensemble generation.
-#' @param slide The length of the sliding window for calculating ensemble weights
+#' @param slide The length of the sliding window for selecting years.
 #' @param num_models The number of top models to consider in each iteration.
 #' @param stack_metric The metric to use for stacking weights.
 #' @return A list containing final model weights, forecast skill evaluation, ensembles, and updated forecasts.
