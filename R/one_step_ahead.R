@@ -18,7 +18,6 @@
 #' @export
 #'
 #' @import doParallel
-#' @import foreach
 #' @importFrom dplyr select filter mutate ungroup pull bind_cols left_join rename bind_rows %>%
 #' @importFrom utils write.table tail
 #' @import forecast
