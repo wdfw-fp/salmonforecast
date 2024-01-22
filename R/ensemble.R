@@ -5,25 +5,7 @@
 #' @param series A data frame containing observed time series data.
 #' @param TY_ensemble The number of years to consider for ensemble generation.
 #' @param k A parameter for weighting in the ensemble generation.
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 #' @param slide The length of the sliding window for selecting years.
-=======
-#' @param slide The length of the sliding window for calculating ensemble weights
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> parent of c2fe43c (beggin implementing stretch for ensemble)
-=======
->>>>>>> parent of c2fe43c (beggin implementing stretch for ensemble)
-=======
->>>>>>> parent of c2fe43c (beggin implementing stretch for ensemble)
-=======
-#' @param slide The length of the sliding window for selecting years.
->>>>>>> parent of cc9e5b2 (make "slide" (number of years to use to generate ensembel weights) a user input of the do_forecast() functions)
-=======
-#' @param slide The length of the sliding window for selecting years.
->>>>>>> parent of cc9e5b2 (make "slide" (number of years to use to generate ensembel weights) a user input of the do_forecast() functions)
 #' @param num_models The number of top models to consider in each iteration.
 #' @param stack_metric The metric to use for stacking weights.
 #' @return A list containing final model weights, forecast skill evaluation, ensembles, and updated forecasts.
