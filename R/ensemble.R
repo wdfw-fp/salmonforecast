@@ -6,6 +6,7 @@
 #' @param TY_ensemble The number of years to consider for ensemble generation.
 #' @param k A parameter for weighting in the ensemble generation.
 #' @param slide The length of the sliding window for calculating ensemble weights
+#' @param stretch Boolean whether to stretch rather than slide
 #' @param num_models The number of top models to consider in each iteration.
 #' @param stack_metric The metric to use for stacking weights.
 #' @return A list containing final model weights, forecast skill evaluation, ensembles, and updated forecasts.
@@ -15,7 +16,7 @@
 #' @importFrom dplyr summarise filter left_join select mutate group_by arrange bind_rows ungroup pull
 #' @importFrom MCMCpack rdirichlet
 #' @export
-ensemble <- function(forecasts, series, TY_ensemble, k, slide, num_models, stack_metric) {
+ensemble <- function(forecasts, series, TY_ensemble, k, slide, num_models, stack_metric, stretch = FALSE) {
 
   yrrange <- forecasts %>%
     dplyr::summarise(minyr = min(year), maxyr = max(year)) %>%
@@ -29,7 +30,12 @@ ensemble <- function(forecasts, series, TY_ensemble, k, slide, num_models, stack
 
   ensembles <- NULL
   for (i in (yrrange[2] - TY_ensemble):maxdata_year) {
-    years <- seq(to = i, length.out = slide)
+
+    if(stretch){
+      #Xiaotian fill this in
+    }else{
+      years <- seq(to = i, length.out = slide)
+    }
 
     tdat <- forecasts %>%
       dplyr::filter(
