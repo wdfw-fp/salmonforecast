@@ -10,6 +10,9 @@
 =======
 #' @param slide The length of the sliding window for calculating ensemble weights
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> parent of c2fe43c (beggin implementing stretch for ensemble)
+=======
 >>>>>>> parent of c2fe43c (beggin implementing stretch for ensemble)
 =======
 >>>>>>> parent of c2fe43c (beggin implementing stretch for ensemble)
