@@ -18,7 +18,6 @@
 #' @param max_vars Maximum number of covariates in a model.
 #' @param forecast_type Type of forecasting approach ("preseason" or other).
 #' @param num_models Number of top models to consider in ensemble creation.
-#' @param n_cores number of cores to use in parallel computing
 #'
 #' @return A list containing tables and plots summarizing the forecasting results and a list containing various outputs, including selected covariates, forecast results, rolling performance, ensemble models, and plots/tables.
 #'
@@ -60,8 +59,7 @@ do_forecast<-function(
     max_vars=1,
     forecast_type="preseason",
     # rolling_year_window=15,
-    num_models=10,
-    n_cores=2
+    num_models=10
 
 
 ){
@@ -84,8 +82,7 @@ do_forecast<-function(
                           forecast_period_start_m =  forecast_period_start_m, #inclusive
                           forecast_period_start_d =  forecast_period_start_d, #inclusive
                           stack_metric = stack_metric,
-                          k=k,
-                          n_cores=n_cores
+                          k=k
   )
 
 
