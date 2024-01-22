@@ -9,6 +9,9 @@
 #' @param slide The length of the sliding window for selecting years.
 =======
 #' @param slide The length of the sliding window for calculating ensemble weights
+<<<<<<< HEAD
+>>>>>>> parent of c2fe43c (beggin implementing stretch for ensemble)
+=======
 >>>>>>> parent of c2fe43c (beggin implementing stretch for ensemble)
 #' @param num_models The number of top models to consider in each iteration.
 #' @param stack_metric The metric to use for stacking weights.
