@@ -3,7 +3,7 @@
 #' This function conducts time series forecasting using ensemble models.
 #' @name do_forecast
 #' @title Perform Forecasting with Ensemble Models
-#' #' @param dat data frame with columns "year", "species", "period", "abundance", and the covariates included in the covariates argument
+#' @param dat data frame with columns "year", "species", "period", "abundance", and the covariates included in the covariates argument
 #' @param covariates A vector specifying the covariates to be considered in the forecasting models.
 #' @param TY_ensemble number of years ti evaluate performance based on plus 1.
 #' @param slide The length of the sliding window for calculating ensemble weights
@@ -48,7 +48,7 @@ do_forecast<-function(
 
 
     TY_ensemble=16,
-    slide=15,
+    slide=3,
     first_forecast_period = 1,
     plot_results = FALSE,
     write_model_summaries = TRUE,
@@ -112,7 +112,8 @@ do_forecast<-function(
                 k=k,
                 slide=slide,
                 num_models=num_models,
-                stack_metric="MAPE")
+                stack_metric="MAPE",
+                stretch=T)
   #plot and table
   plots_and_tables<- plot_table(
     rp=rp,

@@ -17,7 +17,9 @@ test_that("Test do_forecast function", {
     ,"SSH.AMJ"
     ,"UWI.SON"),
 
-    leave_yrs=31,
+    dat=dat,
+
+    #leave_yrs=31,
     TY_ensemble=16,
     first_forecast_period = 1,
     plot_results = FALSE,
@@ -29,8 +31,9 @@ test_that("Test do_forecast function", {
     min_vars=0,
     max_vars=1,
     forecast_type="preseason",
-    rolling_year_window=15,
-    num_models=10
+    #rolling_year_window=15,
+    num_models=10,
+    n_cores=2
 
 
   )

@@ -4,7 +4,16 @@
 \alias{ensemble}
 \title{Ensemble Forecasting Function}
 \usage{
-ensemble(forecasts, series, TY_ensemble, k, slide, num_models, stack_metric)
+ensemble(
+  forecasts,
+  series,
+  TY_ensemble,
+  k,
+  slide,
+  num_models,
+  stack_metric,
+  stretch
+)
 }
 \arguments{
 \item{forecasts}{A data frame containing model forecasts.}
@@ -20,6 +29,8 @@ ensemble(forecasts, series, TY_ensemble, k, slide, num_models, stack_metric)
 \item{num_models}{The number of top models to consider in each iteration.}
 
 \item{stack_metric}{The metric to use for stacking weights.}
+
+\item{stretch}{Boolean whether to stretch rather than slide}
 }
 \value{
 A list containing final model weights, forecast skill evaluation, ensembles, and updated forecasts.

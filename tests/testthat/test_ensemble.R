@@ -185,15 +185,23 @@ test_that("Test ensemble function", {
     series = dat,
     TY_ensemble = TY_ensemble,
     k = k,
-    slide = 15,
+    slide = 3,
     num_models=num_models,
-    stack_metric=stack_metric
+    stack_metric=stack_metric,
+    stretch=FALSE
   )
 
 
-  expect_true(!is.null(ens))
 
   # Assuming 'ens' is your data frame
-  print(head(ens, n = 10))
+  expect_true(!is.null(ens))
+  # Save to CSV
+  #write.csv(ens, "outputs/ensemble.csv", row.names = FALSE)
 
+  # Save to RDS
+  #saveRDS(ens, "outputs/ensemble.rds")
+  # Print the first 10 rows of 'ens'
+  print(head(ens, n = 10))
 })
+
+

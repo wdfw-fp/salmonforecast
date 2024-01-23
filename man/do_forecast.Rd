@@ -2,15 +2,14 @@
 % Please edit documentation in R/do_forecast.R
 \name{do_forecast}
 \alias{do_forecast}
-\title{Perform Forecasting with Ensemble Models
-#' @param dat data frame with columns "year", "species", "period", "abundance", and the covariates included in the covariates argument}
+\title{Perform Forecasting with Ensemble Models}
 \usage{
 do_forecast(
   dat,
   covariates = c("lag1_log_JackOPI", "lag1_log_SmAdj", "lag1_NPGO", "lag1_PDO", "WSST_A",
     "PDO.MJJ", "MEI.OND", "UWI.JAS", "SST.AMJ", "SSH.AMJ", "UWI.SON"),
   TY_ensemble = 16,
-  slide = 15,
+  slide = 3,
   first_forecast_period = 1,
   plot_results = FALSE,
   write_model_summaries = TRUE,
@@ -26,6 +25,8 @@ do_forecast(
 )
 }
 \arguments{
+\item{dat}{data frame with columns "year", "species", "period", "abundance", and the covariates included in the covariates argument}
+
 \item{covariates}{A vector specifying the covariates to be considered in the forecasting models.}
 
 \item{TY_ensemble}{number of years ti evaluate performance based on plus 1.}
