@@ -17,5 +17,5 @@ calculate_performance_metrics(predicted, observed, weighted = FALSE)
 A data frame with calculated performance metrics.
 }
 \description{
-This function calculates performance metrics (MAPE, RMSE, MSA) for a given set of predictions and observations.
+This function calculates performance metrics (MAPE, RMSE, MSA, MASE) for a given set of predictions and observations.
 }
