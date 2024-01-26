@@ -34,8 +34,8 @@ arima_forecast <- function(tdat, xreg, xreg_pred, last_train_yr, first_forecast_
           dplyr::ungroup() %>%
           dplyr::select(abundance) %>%
           unlist() %>%
-          ts(frequency = 2) %>%
-          forecast::auto.arima(lambda = 0, seasonal = TRUE, xreg = xreg)
+          ts(frequency = 1) %>%
+          forecast::auto.arima(lambda = 0, seasonal = FALSE, xreg = xreg)
 
         pred <- c(
           m1$fitted,
@@ -51,8 +51,8 @@ arima_forecast <- function(tdat, xreg, xreg_pred, last_train_yr, first_forecast_
           dplyr::ungroup() %>%
           dplyr::select(abundance) %>%
           unlist() %>%
-          ts(frequency = 2) %>%
-          forecast::auto.arima(lambda = 0, seasonal = TRUE, xreg = NULL)
+          ts(frequency = 1) %>%
+          forecast::auto.arima(lambda = 0, seasonal = FALSE, xreg = NULL)
 
         pred <- c(
           m1$fitted,
