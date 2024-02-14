@@ -3,10 +3,9 @@
 #' This function conducts time series forecasting using ensemble models.
 #' @name do_forecast
 #' @title Perform Forecasting with Ensemble Models
-#' @param dat data frame with columns "year", "species", "period", "abundance", and the covariates included in the covariates argument
 #' @param covariates A vector specifying the covariates to be considered in the forecasting models.
-#' @param TY_ensemble number of years ti evaluate performance based on plus 1.
-#' @param slide The length of the sliding window for calculating ensemble weights
+#' @param leave_yrs Number of years to leave out for model validation.
+#' @param TY_ensemble Number of models in the ensemble.
 #' @param first_forecast_period The starting period for making forecasts.
 #' @param plot_results Logical, indicating whether to plot forecast results.
 #' @param write_model_summaries Logical, indicating whether to write model summaries.
@@ -17,8 +16,8 @@
 #' @param min_vars Minimum number of covariates in a model.
 #' @param max_vars Maximum number of covariates in a model.
 #' @param forecast_type Type of forecasting approach ("preseason" or other).
+#' @param rolling_year_window Number of years for rolling performance calculation.
 #' @param num_models Number of top models to consider in ensemble creation.
-#' @param n_cores number of cores to use in parallel computing
 #'
 #' @return A list containing tables and plots summarizing the forecasting results and a list containing various outputs, including selected covariates, forecast results, rolling performance, ensemble models, and plots/tables.
 #'
@@ -30,7 +29,6 @@
 #function to do forecast and return plots
 
 do_forecast<-function(
-    dat,
     covariates=c(#new
       "lag1_log_JackOPI"
       ,"lag1_log_SmAdj"
@@ -46,9 +44,8 @@ do_forecast<-function(
       ,"SSH.AMJ"
       ,"UWI.SON"),
 
-
+    leave_yrs=31,
     TY_ensemble=16,
-    slide=3,
     first_forecast_period = 1,
     plot_results = FALSE,
     write_model_summaries = TRUE,
@@ -59,15 +56,11 @@ do_forecast<-function(
     min_vars=0,
     max_vars=1,
     forecast_type="preseason",
-    # rolling_year_window=15,
-    num_models=10,
-    n_cores=2
+    rolling_year_window=15,
+    num_models=10
 
 
 ){
-
-  leave_yrs<-TY_ensemble+slide
-
 
   #find all subsets
   best_covariates<-all_subsets(series=dat,covariates=covariates,min=min_vars,max=max_vars,type=forecast_type,fit=FALSE)
@@ -84,8 +77,7 @@ do_forecast<-function(
                           forecast_period_start_m =  forecast_period_start_m, #inclusive
                           forecast_period_start_d =  forecast_period_start_d, #inclusive
                           stack_metric = stack_metric,
-                          k=k,
-                          n_cores=n_cores
+                          k=k
   )
 
 
@@ -100,7 +92,7 @@ do_forecast<-function(
   # rolling performance / ensemble
   rp<-rolling_perf(one_aheads=results,
                    series=dat,
-                   roll_years = TY_ensemble-1,
+                   roll_years = rolling_year_window,
                    mod_include = 10,
                    TY_ensemble = TY_ensemble,
                    model_list = model_list)
@@ -110,17 +102,15 @@ do_forecast<-function(
                 series=dat,
                 TY_ensemble=TY_ensemble,
                 k=k,
-                slide=slide,
+                slide=15,
                 num_models=num_models,
-                stack_metric="MAPE",
-                stretch=T)
+                stack_metric="MAPE")
   #plot and table
   plots_and_tables<- plot_table(
     rp=rp,
     ens=ens,
-    dat=dat,
     stack_metric=stack_metric,
-    rolling_year_window=TY_ensemble-1
+    rolling_year_window=rolling_year_window
   )
   #return = plots_and_tables
   return(list(

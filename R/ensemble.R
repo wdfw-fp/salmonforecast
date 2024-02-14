@@ -5,8 +5,7 @@
 #' @param series A data frame containing observed time series data.
 #' @param TY_ensemble The number of years to consider for ensemble generation.
 #' @param k A parameter for weighting in the ensemble generation.
-#' @param slide The length of the sliding window for calculating ensemble weights
-#' @param stretch Boolean whether to stretch rather than slide
+#' @param slide The length of the sliding window for selecting years.
 #' @param num_models The number of top models to consider in each iteration.
 #' @param stack_metric The metric to use for stacking weights.
 #' @return A list containing final model weights, forecast skill evaluation, ensembles, and updated forecasts.
@@ -16,7 +15,7 @@
 #' @importFrom dplyr summarise filter left_join select mutate group_by arrange bind_rows ungroup pull
 #' @importFrom MCMCpack rdirichlet
 #' @export
-ensemble <- function(forecasts, series, TY_ensemble, k, slide, num_models, stack_metric, stretch ) {
+ensemble <- function(forecasts, series, TY_ensemble, k, slide, num_models, stack_metric) {
 
   yrrange <- forecasts %>%
     dplyr::summarise(minyr = min(year), maxyr = max(year)) %>%
@@ -30,25 +29,7 @@ ensemble <- function(forecasts, series, TY_ensemble, k, slide, num_models, stack
 
   ensembles <- NULL
   for (i in (yrrange[2] - TY_ensemble):maxdata_year) {
-
-    if(stretch){
-      #Xiaotian fill this in
-
-      # Determine the slide based on the current year (i) and TY_ensemble
-      slide_stetched <- i - (yrrange[2] - TY_ensemble) + 3  # Assuming a minimum slide of 3
-
-      # Adjust the slide to ensure it does not go below the minimum value
-      slide_stetched <- max(slide_stetched, 3)
-
-      # Generate the sequence of years
-      years <- seq(to = i, length.out = slide_stetched)
-
-
-
-
-    }else{
-      years <- seq(to = i, length.out = slide)
-    }
+    years <- seq(to = i, length.out = slide)
 
     tdat <- forecasts %>%
       dplyr::filter(
@@ -141,13 +122,13 @@ ensemble <- function(forecasts, series, TY_ensemble, k, slide, num_models, stack
     #     ) %>%
     #     dplyr::filter(year == max(years) + 1) %>%
     #     dplyr::mutate(model = "Best individual") %>%
-    # dplyr::group_by(year, model) %>%
-    # dplyr::summarise(
-    #   MSA_weighted = mean(MSA_weight, na.rm = TRUE),
-    #   RMSE_weighted = mean(RMSE_weight, na.rm = TRUE),
-    #   MAPE_weighted = mean(MAPE_weight, na.rm = TRUE),
-    #   Stack_weighted = mean(Stacking_weight, na.rm = TRUE)
-    # )
+        # dplyr::group_by(year, model) %>%
+        # dplyr::summarise(
+        #   MSA_weighted = mean(MSA_weight, na.rm = TRUE),
+        #   RMSE_weighted = mean(RMSE_weight, na.rm = TRUE),
+        #   MAPE_weighted = mean(MAPE_weight, na.rm = TRUE),
+        #   Stack_weighted = mean(Stacking_weight, na.rm = TRUE)
+        # )
     # )
 
     ensembles <- dplyr::bind_rows(ensembles, tdat2)

@@ -5,7 +5,6 @@
 #'
 #' @param rp Rolling performance data.
 #' @param ens Ensemble model data.
-#' @param dat the input data with columns "year" and "abundance"
 #'
 #' @return A list containing tables and plots summarizing the forecasting results.
 #'
@@ -19,19 +18,17 @@
 plot_table<-function(
     rp,
     ens,
-    dat,
     stack_metric,
     rolling_year_window,
     output_path = "outputs"
 
-){
+  ){
 
   for_skill<-
     rp$performance %>% mutate(model="Best_individual") %>% bind_rows(
       ens$forecast_skill %>%filter(grepl("weight",model))
     )  %>%
     arrange(MAPE)
-
 
 
 
@@ -90,13 +87,13 @@ plot_table<-function(
 
   Figure2<-ggplot(rp$top_mods %>% filter(rank==1) %>% mutate(model="Best_individual")%>% bind_rows(
     ens$ensembles%>% left_join(dat %>% dplyr::select(year,abundance)) %>% mutate(model_name=model)),aes(x=year,y=predicted_abundance,col=model))+
-    geom_line()+
-    geom_point(aes(x=year,y=abundance),color="black")+
-    ylim(0,NA)+
-    scale_x_continuous(breaks=unique(results_best$year))+
-    theme(legend.position = "none")+
-    ylab("Abundance")+xlab("")+
-    theme(legend.key.size=unit(.15,'cm'),legend.position = "top")
+  geom_line()+
+  geom_point(aes(x=year,y=abundance),color="black")+
+  ylim(0,NA)+
+  scale_x_continuous(breaks=unique(results_best$year))+
+  theme(legend.position = "none")+
+  ylab("Abundance")+xlab("")+
+  theme(legend.key.size=unit(.15,'cm'),legend.position = "top")
 
 
   Figure3<-ggplot((results_best ) %>% mutate(Model=sub("_"," ",model_name)) %>%  mutate(pct_error=log10(((predicted_abundance-abundance)/abundance)+1)) ,
@@ -111,15 +108,15 @@ plot_table<-function(
   ggsave(file.path(output_path, "Figure2.png"), Figure2, width = 8, height = 6)
   ggsave(file.path(output_path, "Figure3.png"), Figure3, width = 8, height = 6)
 
-  return(
-    list(
-      Table2=Table2,
-      Table3=Table3,
-      Table4=Table4,
-      Figure1=Figure1,
-      Figure2=Figure2,
-      Figure3=Figure3
-    )
+return(
+  list(
+    Table2=Table2,
+    Table3=Table3,
+    Table4=Table4,
+    Figure1=Figure1,
+    Figure2=Figure2,
+    Figure3=Figure3
   )
+)
 
 }

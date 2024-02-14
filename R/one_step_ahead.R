@@ -12,15 +12,12 @@
 #' @param forecast_period_start_d The starting day for the forecast period (inclusive).
 #' @param stack_metric A metric used for stacking models.
 #' @param k A parameter for the model evaluation.
-#' @param n_cores number of cores to use in parallel computing
-
 #'
 #' @return A data frame containing forecasts and other information.
 #'
 #' @export
 #'
 #' @import doParallel
-#' @import foreach
 #' @importFrom dplyr select filter mutate ungroup pull bind_cols left_join rename bind_rows %>%
 #' @importFrom utils write.table tail
 #' @import forecast
@@ -36,10 +33,11 @@ one_step_ahead <- function(series,
                            forecast_period_start_m, # inclusive
                            forecast_period_start_d, # inclusive
                            stack_metric,
-                           k,
-                           n_cores=2
+                           k
 ) {
-
+  species <- "Coho"
+  abundance <- series$abundance
+  train_test<-series$train_test
 
   start <- Sys.time()
 
@@ -63,7 +61,7 @@ one_step_ahead <- function(series,
   #has_na_covariates <- colSums(is.na(filtered_series[, covariates])) > 0
 
   #cl <- makeCluster(parallel::detectCores() - 3)
-  cl <- makeCluster(n_cores)
+  cl <- makeCluster(2)  # Use 2 cores as an example, adjust as needed
   registerDoParallel(cl)
   forecasts_out <- foreach::foreach(i = 1:leave_yrs, .combine = 'rbind', .packages = c("forecast")) %dopar% {
 
