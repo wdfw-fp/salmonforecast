@@ -37,12 +37,8 @@ ensemble <- function(forecasts, series, TY_ensemble, k, min_ens_yrs, num_models,
 
     if (stretch) {
       # Determine the min_ens_yrs based on the current year (i) and TY_ensemble
-      ens_yrs  <- i - (yrrange[2] - TY_ensemble)+min_ens_yrs
+      ens_yrs  <- i - (yrrange[2] - TY_ensemble)+ min_ens_yrs
 
-      # Check if ens_yrs is less than 3
-      #if (stretched < 3) {
-      #stop("Error: 'stretched' should not be less than 3.")
-      #}
 
       # Generate the sequence of years
       years <- seq(to = i, length.out = ens_yrs)
@@ -159,25 +155,6 @@ ensemble <- function(forecasts, series, TY_ensemble, k, min_ens_yrs, num_models,
                           values_to = "value") %>%
       tidyr::pivot_wider(id_cols = c("year", "model"), names_from = Parameter, values_from = value)
 
-    # # Add "Best individual" rows with correct performance metrics
-    # tdat2 <- dplyr::bind_rows(
-    #   tdat2,
-    #   forecasts %>%
-    #     dplyr::filter(
-    #       model %in% c(forecasts %>%
-    #                      dplyr::filter(year == i + 1, rank <= num_models) %>%
-    #                      dplyr::pull(model))
-    #     ) %>%
-    #     dplyr::filter(year == max(years) + 1) %>%
-    #     dplyr::mutate(model = "Best individual") %>%
-    # dplyr::group_by(year, model) %>%
-    # dplyr::summarise(
-    #   MSA_weighted = mean(MSA_weight, na.rm = TRUE),
-    #   RMSE_weighted = mean(RMSE_weight, na.rm = TRUE),
-    #   MAPE_weighted = mean(MAPE_weight, na.rm = TRUE),
-    #   Stack_weighted = mean(Stacking_weight, na.rm = TRUE)
-    # )
-    # )
 
     ensembles <- dplyr::bind_rows(ensembles, tdat2)
   }
@@ -211,7 +188,6 @@ ensemble <- function(forecasts, series, TY_ensemble, k, min_ens_yrs, num_models,
     dplyr::mutate(error = predicted_abundance - abundance,
                   pct_error = scales::percent(error / abundance)
     ) %>%
-    # dplyr::left_join(tdat %>% dplyr::select(model, Stacking_weight))
     dplyr::left_join(tdat %>% dplyr::select(model, Stacking_weight)) %>%
     dplyr::group_by(model) %>%
     dplyr::summarize(

@@ -36,6 +36,4 @@ A list with three elements:
 }
 \description{
 This function calculates the rolling performance of models on time series data.
-
-This function calculates the rolling performance of models on time series data.
 }

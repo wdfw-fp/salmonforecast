@@ -15,8 +15,8 @@ make_dat <- function(dat1,
   "lag1_log_Jack"
   ,"lag4_log_adults"
   ,"lag5_log_adults"
-  ,"lag1_log_SAR" #snake river sockeye PIT SAR
-  ,"lag2_log_SAR" #snake river sockeye PIT SAR
+  ,"lag1_log_SAR"
+  ,"lag2_log_SAR"
   ,"lag1_NPGO"
   ,"lag1_PDO"
   ,"lag2_NPGO"
@@ -31,8 +31,6 @@ make_dat <- function(dat1,
 )) {
 
 
-
-    #scrape covariates and munge data
       #add any missing years in the input to the output (with NAs in the values) because ARIMA models assume that the years are consecutive.
 
       Yrlist<-data.frame(year=c(min(dat1$year):(max(dat1$year)+1)))
@@ -81,8 +79,6 @@ make_dat <- function(dat1,
         mutate(Year=as.integer(as.numeric(Year)))%>%
         group_by(Year)%>%
         add_tally()%>%
-        #filter(!Month>6)%>% #use only spring (Jan-June) NPGO
-        #filter(!n < 12)%>% #use only complete years
         group_by(Year)%>%
         dplyr::summarise(NPGO=mean(NPGO))%>%
         dplyr::rename(year=Year)%>%

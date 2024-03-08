@@ -186,7 +186,7 @@ test_that("Test rolling performance function", {
 
   expect_true(!is.null(rp))
 
-  #print(head(rp, n = 10))
+
   # Save 'all_mods' to a CSV file
   write.csv(rp$all_mods, file = "outputs/all_mods_results.csv", row.names = FALSE)
 

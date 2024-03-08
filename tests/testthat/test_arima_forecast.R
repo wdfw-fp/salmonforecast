@@ -95,20 +95,6 @@ stack_metric <- "MAPE"
 num_models <- 10
 rolling_year_window <- 15
 
-# Load your dataset 'dat' from a CSV file (update the file path)
-# dat <- read.csv("data/dat.csv")
-
-# Read CSV file into a data frame
-#dat <- read.csv("C:/Users/tjyua/OneDrive/Desktop/Data498/SalmonForecasting/data/processed/up_sum_chk_2023.csv")
-
-# Save the data frame as an R data file (RDA)
-#save(dat, file = "C:/Users/tjyua/OneDrive/Desktop/Data498/SalmonForecasting/data/processed/up_sum_chk_2023.rda")
-#dat <- make_dat_from_excel(excel_path = "C:/Users/tjyua/OneDrive/Desktop/Data498/SalmonForecasting/data/SummerChinook.xlsx",file_path = "C:/Users/tjyua/OneDrive/Desktop/Data498/SalmonForecasting/data/processed/up_sum_chk_2023.csv", redo = FALSE)
-# Example usage without providing file_path
-#dat <- make_dat_from_excel(excel_path = "C:/Users/tjyua/OneDrive/Desktop/Data498/SalmonForecasting/data/SummerChinook.xlsx", redo = FALSE)
-#dat <- make_dat_from_excel(excel_path = system.file("extdata", "SummerChinook.xlsx", package = "SalmonForecasting"), redo = FALSE)
-
-
 series <- dat
 
 series <- series %>%
@@ -123,8 +109,7 @@ series <- series %>%
 
 # Rest of your code
 exists1 <- ifelse(is.na(series %>% dplyr::select(abundance) %>% tail(n = 1) %>% pull()), 1, 0)
-#cl <- parallel::makeCluster(parallel::detectCores() - 3)
-cl <- parallel::makeCluster(2)  # Create a cluster with 2 workers
+cl <- parallel::makeCluster(2)
 
 doParallel::registerDoParallel(cl)
 
@@ -141,8 +126,7 @@ forecasts_out <- foreach::foreach(i = 1:leave_yrs, .combine = 'rbind', .packages
     last_train_yr <- max(series$year) - (leave_yrs - i + exists1)
     tdat <- series %>%
       dplyr::filter(dplyr::if_any(.cols = c(year), ~ . <= (last_train_yr + 1))) %>%
-      dplyr::mutate(train_test = ifelse(year > last_train_yr & period >= first_forecast_period, 1, 0)) #%>%
-      #dplyr::mutate(abundance = ifelse(is.na(abundance), 0, abundance))
+      dplyr::mutate(train_test = ifelse(year > last_train_yr & period >= first_forecast_period, 1, 0))
 
     xreg <- tdat %>%
       dplyr::filter(train_test == 0) %>%
@@ -206,5 +190,4 @@ write.csv(all_forecasts, final_output_file)
 # Your test assertion
 expect_true(TRUE, "This is a test assertion.")
 
-# You can add more test assertions here if needed
 })

@@ -5,7 +5,7 @@
 #' @title Perform Forecasting with Ensemble Models
 #' @param dat data frame with columns "year", "species", "period", "abundance", and the covariates included in the covariates argument
 #' @param covariates A vector specifying the covariates to be considered in the forecasting models.
-#' @param TY_ensemble number of years ti evaluate performance based on plus 1.
+#' @param TY_ensemble number of years evaluate performance based on plus 1.
 #' @param min_ens_yrs The minimal length of the sliding window for calculating ensemble weights
 #' @param first_forecast_period The starting period for making forecasts.
 #' @param plot_results Logical, indicating whether to plot forecast results.
@@ -23,7 +23,7 @@
 #' @return A list containing tables and plots summarizing the forecasting results and a list containing various outputs, including selected covariates, forecast results, rolling performance, ensemble models, and plots/tables.
 #'
 #' @importFrom dplyr mutate group_by %>%
-#' @import ggplot2
+#' @import ggplot2 rvest
 #' @export
 #'
 
@@ -46,10 +46,9 @@ do_forecast<-function(
       ,"SSH.AMJ"
       ,"UWI.SON"),
 
-
+    stretch=F,
     TY_ensemble=16,
     min_ens_yrs=3,
-    #ens_yrs=3,
     first_forecast_period = 1,
     plot_results = FALSE,
     write_model_summaries = TRUE,
@@ -60,16 +59,14 @@ do_forecast<-function(
     min_vars=0,
     max_vars=1,
     forecast_type="preseason",
-    # rolling_year_window=15,
     num_models=10,
     n_cores=2,
     #leave_yrs=TY_ensemble+slide
-    leave_yrs=31
+    leave_yrs=31,
+    output_path="outputs"
 
 
 ){
-
-
 
 
   #find all subsets
@@ -114,10 +111,9 @@ do_forecast<-function(
                 TY_ensemble=TY_ensemble,
                 k=k,
                 min_ens_yrs=min_ens_yrs,
-                #leave_yrs=leave_yrs,
                 num_models=num_models,
                 stack_metric="MAPE",
-                stretch=T)
+                stretch=stretch)
   #plot and table
   plots_and_tables<- plot_table(
     rp=rp,
@@ -126,6 +122,50 @@ do_forecast<-function(
     stack_metric=stack_metric,
     rolling_year_window=TY_ensemble-1
   )
+
+  kableExtra::save_kable(plots_and_tables$Table2, file.path(output_path, "Table2.html"))
+  kableExtra::save_kable(plots_and_tables$Table3, file.path(output_path, "Table3.html"))
+  kableExtra::save_kable(plots_and_tables$Table4, file.path(output_path, "Table4.html"))
+
+  ggsave(file.path(output_path, "Figure1.png"), plots_and_tables$Figure1, width = 8, height = 6)
+  ggsave(file.path(output_path, "Figure2.png"), plots_and_tables$Figure2, width = 8, height = 6)
+  ggsave(file.path(output_path, "Figure3.png"), plots_and_tables$Figure3, width = 8, height = 6)
+
+
+
+  # Extracting HTML content
+  table_html2 <- as.character(plots_and_tables$Table2)
+
+  # Extracting data from the HTML content
+  table_data2 <- html_table(read_html(table_html2))[[1]]
+
+  # Save the data to CSV
+  write.csv(table_data2, file.path(output_path, "Table2.csv"), row.names = FALSE)
+
+
+
+  # Extracting HTML content
+  table_html3 <- as.character(plots_and_tables$Table3)
+
+  # Extracting data from the HTML content
+  table_data3 <- html_table(read_html(table_html3))[[1]]
+
+  # Save the data to CSV
+  write.csv(table_data3, file.path(output_path, "Table3.csv"), row.names = FALSE)
+
+
+
+  # Extracting HTML content
+  table_html4 <- as.character(plots_and_tables$Table4)
+
+  # Extracting data from the HTML content
+  table_data4 <- html_table(read_html(table_html4))[[1]]
+
+  # Save the data to CSV
+  write.csv(table_data4, file.path(output_path, "Table4.csv"), row.names = FALSE)
+
+
+
   #return = plots_and_tables
   return(list(
     best_covariates = best_covariates,
@@ -135,3 +175,4 @@ do_forecast<-function(
   ))
 
 }
+

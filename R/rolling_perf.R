@@ -2,8 +2,6 @@
 #' @title Calculate rolling performance of models
 #' @description This function calculates the rolling performance of models on time series data.
 #'
-#' This function calculates the rolling performance of models on time series data.
-#'
 #' @param one_aheads A data frame with one-step ahead model predictions.
 #' @param series A data frame with time series data that includes 'year' and 'abundance' columns.
 #' @param roll_years The number of years for rolling calculation (default is 15).
@@ -22,7 +20,6 @@
 #' @import tibble
 #' @import readr
 #' @import stats
-
 #' @export
 rolling_perf <- function(one_aheads, series, roll_years, mod_include, TY_ensemble, model_list) {
 
@@ -48,15 +45,6 @@ rolling_perf <- function(one_aheads, series, roll_years, mod_include, TY_ensembl
     dplyr::left_join(model_list, by = "model") %>%
     dplyr::arrange(dplyr::desc(year), rank)
 
-  # performance of the best model
-  # perf <- tops %>%
-  #   dplyr::ungroup() %>%
-  #   dplyr::filter(rank == 1) %>%
-  #   dplyr::summarize(
-  #     MAPE = mean(APE, na.rm = TRUE) * 100,
-  #     RMSE = sqrt(mean(error^2, na.rm = TRUE)),
-  #     MSA = 100 * (exp(mean(abs(log(abundance / predicted_abundance)), na.rm = TRUE)) - 1)
-  #   )
 
   # Use the new function for performance metrics calculation
   perf <- tops %>%

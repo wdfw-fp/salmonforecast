@@ -1,4 +1,3 @@
-
 # Test all_subsets function
 test_that("Test all_subsets function", {
   load_or_generate_data <- function(use_rda = TRUE, excel_path = NULL) {
@@ -86,7 +85,6 @@ test_that("Test all_subsets function", {
   )
 
   # Add test assertions
-  expect_equal(length(results), 2)  # We expect two results because min=1 and max=2
+  expect_equal(length(results), 2)
 
-  # add more test cases and assertions as needed
 })

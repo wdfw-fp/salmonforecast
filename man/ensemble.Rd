@@ -9,7 +9,7 @@ ensemble(
   series,
   TY_ensemble,
   k,
-  slide,
+  min_ens_yrs,
   num_models,
   stack_metric,
   stretch
@@ -24,13 +24,13 @@ ensemble(
 
 \item{k}{A parameter for weighting in the ensemble generation.}
 
-\item{slide}{The length of the sliding window for calculating ensemble weights}
+\item{min_ens_yrs}{The minimal length of the sliding window for calculating ensemble weights}
 
 \item{num_models}{The number of top models to consider in each iteration.}
 
 \item{stack_metric}{The metric to use for stacking weights.}
 
-\item{stretch}{Boolean whether to stretch rather than slide}
+\item{stretch}{Boolean whether to stretch rather than using fixed minimal ensemble years}
 }
 \value{
 A list containing final model weights, forecast skill evaluation, ensembles, and updated forecasts.

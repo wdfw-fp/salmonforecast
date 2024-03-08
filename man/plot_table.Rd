@@ -5,14 +5,7 @@
 \title{Plot and Generate Tables for Forecasting Results
 This function creates tables and plots to summarize the forecasting results.}
 \usage{
-plot_table(
-  rp,
-  ens,
-  dat,
-  stack_metric,
-  rolling_year_window,
-  output_path = "outputs"
-)
+plot_table(rp, ens, dat, stack_metric, rolling_year_window)
 }
 \arguments{
 \item{rp}{Rolling performance data.}

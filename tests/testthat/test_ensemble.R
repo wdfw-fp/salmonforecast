@@ -105,6 +105,7 @@ test_that("Test ensemble function", {
   stack_metric<-"MAPE"
   num_models<-3
   rolling_year_window<-15
+  stretch=F
 
   inputs<-list(
     yr_start = yr_start,
@@ -189,7 +190,7 @@ test_that("Test ensemble function", {
     #leave_yrs=31,
     num_models=num_models,
     stack_metric=stack_metric,
-    stretch=FALSE
+    stretch=stretch
   )
 
 

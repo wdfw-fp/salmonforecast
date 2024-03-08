@@ -13,7 +13,6 @@
 #' @param stack_metric A metric used for stacking models.
 #' @param k A parameter for the model evaluation.
 #' @param n_cores number of cores to use in parallel computing
-
 #'
 #' @return A data frame containing forecasts and other information.
 #'
@@ -60,10 +59,6 @@ one_step_ahead <- function(series,
     )
 
 
-  # Determine if any covariate columns have NA values
-  #has_na_covariates <- colSums(is.na(filtered_series[, covariates])) > 0
-
-  #cl <- makeCluster(parallel::detectCores() - 3)
   cl <- makeCluster(n_cores)
   registerDoParallel(cl)
   forecasts_out <- foreach::foreach(i = 1:leave_yrs, .combine = 'rbind', .packages = c("forecast")) %dopar% {

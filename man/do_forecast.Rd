@@ -8,8 +8,9 @@ do_forecast(
   dat,
   covariates = c("lag1_log_JackOPI", "lag1_log_SmAdj", "lag1_NPGO", "lag1_PDO", "WSST_A",
     "PDO.MJJ", "MEI.OND", "UWI.JAS", "SST.AMJ", "SSH.AMJ", "UWI.SON"),
+  stretch = F,
   TY_ensemble = 16,
-  slide = 3,
+  min_ens_yrs = 3,
   first_forecast_period = 1,
   plot_results = FALSE,
   write_model_summaries = TRUE,
@@ -21,7 +22,9 @@ do_forecast(
   max_vars = 1,
   forecast_type = "preseason",
   num_models = 10,
-  n_cores = 2
+  n_cores = 2,
+  leave_yrs = 31,
+  output_path = "outputs"
 )
 }
 \arguments{
@@ -29,9 +32,9 @@ do_forecast(
 
 \item{covariates}{A vector specifying the covariates to be considered in the forecasting models.}
 
-\item{TY_ensemble}{number of years ti evaluate performance based on plus 1.}
+\item{TY_ensemble}{number of years evaluate performance based on plus 1.}
 
-\item{slide}{The length of the sliding window for calculating ensemble weights}
+\item{min_ens_yrs}{The minimal length of the sliding window for calculating ensemble weights}
 
 \item{first_forecast_period}{The starting period for making forecasts.}
 

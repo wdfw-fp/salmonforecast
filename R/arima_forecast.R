@@ -11,7 +11,7 @@
 #' @param write_model_summaries A logical indicating whether to write model summaries.
 #' @param train_test A vector or column of the time series data indicating training/test periods.
 #' @param abundance A vector or column of the time series data indicating abundance values.
-#' @return A description of the return value.
+#' @return return value.
 #' @export
 #' @importFrom dplyr if_any filter ungroup select mutate bind_cols pull all_of %>%
 #' @importFrom foreach %dopar%
@@ -25,7 +25,6 @@ arima_forecast <- function(tdat, xreg, xreg_pred, last_train_yr, first_forecast_
   train_test <- tdat$train_test
   abundance <- tdat$abundance
   value=NULL
-  #Point_Forecast<-NULL
   result <- tryCatch(
     {
       if (ncol(xreg) > 0) {

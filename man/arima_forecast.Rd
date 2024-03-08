@@ -33,7 +33,7 @@ arima_forecast(
 \item{abundance}{A vector or column of the time series data indicating abundance values.}
 }
 \value{
-A description of the return value.
+return value.
 }
 \description{
 A comprehensive R package for time series analysis, forecasting, and regression modeling.
