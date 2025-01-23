@@ -12,7 +12,9 @@ arima_forecast(
   first_forecast_period,
   write_model_summaries,
   train_test,
-  abundance
+  abundance,
+  freq = 1,
+  seasonal = FALSE
 )
 }
 \arguments{
@@ -31,6 +33,8 @@ arima_forecast(
 \item{train_test}{A vector or column of the time series data indicating training/test periods.}
 
 \item{abundance}{A vector or column of the time series data indicating abundance values.}
+
+\item{freq}{Frequency of the time series}
 }
 \value{
 A description of the return value.

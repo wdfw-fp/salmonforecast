@@ -2,8 +2,7 @@
 % Please edit documentation in R/do_forecast.R
 \name{do_forecast}
 \alias{do_forecast}
-\title{Perform Forecasting with Ensemble Models
-#' @param dat data frame with columns "year", "species", "period", "abundance", and the covariates included in the covariates argument}
+\title{Perform Forecasting with Ensemble Models}
 \usage{
 do_forecast(
   dat,
@@ -22,10 +21,13 @@ do_forecast(
   max_vars = 1,
   forecast_type = "preseason",
   num_models = 10,
-  n_cores = 2
+  n_cores = 2,
+  ts_freq = 1
 )
 }
 \arguments{
+\item{dat}{data frame with columns "year", "species", "period", "abundance", and the covariates included in the covariates argument}
+
 \item{covariates}{A vector specifying the covariates to be considered in the forecasting models.}
 
 \item{TY_ensemble}{number of years ti evaluate performance based on plus 1.}

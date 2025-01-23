@@ -11,6 +11,7 @@ plot_table(
   dat,
   stack_metric,
   rolling_year_window,
+  benchmark = NULL,
   output_path = "outputs"
 )
 }
@@ -20,6 +21,8 @@ plot_table(
 \item{ens}{Ensemble model data.}
 
 \item{dat}{the input data with columns "year" and "abundance"}
+
+\item{benchmark}{info on a  model to be compared to}
 }
 \value{
 A list containing tables and plots summarizing the forecasting results.

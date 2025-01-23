@@ -10,6 +10,8 @@ one_step_ahead(
   TY_ensemble,
   covariates,
   first_forecast_period,
+  ts_freq = 1,
+  seasonal = FALSE,
   plot_results,
   write_model_summaries,
   forecast_period_start_m,
@@ -29,6 +31,8 @@ one_step_ahead(
 \item{covariates}{A list of covariates to include in the model.}
 
 \item{first_forecast_period}{The first period for forecasting.}
+
+\item{ts_freq}{frequency of time series being forecasts}
 
 \item{plot_results}{A logical value to indicate whether to plot results.}
 
