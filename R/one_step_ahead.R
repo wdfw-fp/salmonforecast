@@ -6,6 +6,7 @@
 #' @param TY_ensemble A parameter for ensemble evaluation.
 #' @param covariates A list of covariates to include in the model.
 #' @param first_forecast_period The first period for forecasting.
+#' @param ts_freq frequency of time series being forecasts
 #' @param plot_results A logical value to indicate whether to plot results.
 #' @param write_model_summaries A logical value to indicate whether to write model summaries.
 #' @param forecast_period_start_m The starting month for the forecast period (inclusive).
@@ -13,8 +14,6 @@
 #' @param stack_metric A metric used for stacking models.
 #' @param k A parameter for the model evaluation.
 #' @param n_cores number of cores to use in parallel computing
-
-#'
 #' @return A data frame containing forecasts and other information.
 #'
 #' @export
@@ -24,13 +23,13 @@
 #' @importFrom dplyr select filter mutate ungroup pull bind_cols left_join rename bind_rows %>%
 #' @importFrom utils write.table tail
 #' @import forecast
-
-# Define the one_step_ahead function with the corrections
 one_step_ahead <- function(series,
                            leave_yrs,
                            TY_ensemble,
                            covariates,
                            first_forecast_period,
+                           ts_freq=1,
+                           seasonal=FALSE,
                            plot_results,
                            write_model_summaries,
                            forecast_period_start_m, # inclusive
@@ -69,7 +68,7 @@ one_step_ahead <- function(series,
 
     i <- i  # Define 'i' within the foreach loop
     for (c in 1:length(covariates)) {
-      last_train_yr <- max(series$year) - (leave_yrs - i + 1)
+      last_train_yr <- max(filtered_series$year) - (leave_yrs - i + 1)
       tdat <- filtered_series %>%
         filter(year <= (last_train_yr + 1)) %>%
         mutate(train_test = ifelse(year > last_train_yr & period >= first_forecast_period, 1, 0)
@@ -92,7 +91,7 @@ one_step_ahead <- function(series,
       # Use tryCatch to handle potential errors during ARIMA model fitting
       tryCatch(
         {
-          temp <- arima_forecast(tdat, xreg, xreg_pred, last_train_yr, first_forecast_period)
+          temp <- arima_forecast(tdat, xreg, xreg_pred, last_train_yr, first_forecast_period,freq=ts_freq,seasonal=seasonal)
           pred <- temp$pred %>% tail(1)
           CI <- temp$CI
 
