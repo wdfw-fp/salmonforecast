@@ -15,6 +15,7 @@ do_forecast(
   write_model_summaries = TRUE,
   forecast_period_start_m = 1,
   forecast_period_start_d = 1,
+  do_stacking = TRUE,
   stack_metric = "MAPE",
   k = 1,
   min_vars = 0,
@@ -22,7 +23,8 @@ do_forecast(
   forecast_type = "preseason",
   num_models = 10,
   n_cores = 2,
-  ts_freq = 1
+  ts_freq = 1,
+  seasonal = FALSE
 )
 }
 \arguments{

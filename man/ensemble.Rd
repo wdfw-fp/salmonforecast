@@ -12,7 +12,8 @@ ensemble(
   slide,
   num_models,
   stack_metric,
-  stretch = FALSE
+  stretch = FALSE,
+  do_stacking = TRUE
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ ensemble(
 \item{stack_metric}{The metric to use for stacking weights.}
 
 \item{stretch}{Boolean whether to stretch rather than slide}
+
+\item{do_stacking}{whether to include stacking model weights}
 }
 \value{
 A list containing final model weights, forecast skill evaluation, ensembles, and updated forecasts.

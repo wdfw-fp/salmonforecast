@@ -54,6 +54,7 @@ do_forecast<-function(
     write_model_summaries = TRUE,
     forecast_period_start_m =  1, #inclusive
     forecast_period_start_d =  1, #inclusive
+    do_stacking=TRUE,
     stack_metric = "MAPE",
     k=1,
     min_vars=0,
@@ -62,7 +63,8 @@ do_forecast<-function(
     # rolling_year_window=15,
     num_models=10,
     n_cores=2,
-    ts_freq=1
+    ts_freq=1,
+    seasonal=FALSE
 
 
 ){
@@ -87,7 +89,8 @@ do_forecast<-function(
                           stack_metric = stack_metric,
                           k=k,
                           n_cores=n_cores,
-                          ts_freq=ts_freq
+                          ts_freq=ts_freq,
+                          seasonal=seasonal
   )
 
 
@@ -114,7 +117,8 @@ do_forecast<-function(
                 k=k,
                 slide=slide,
                 num_models=num_models,
-                stack_metric="MAPE")
+                stack_metric="MAPE",
+                do_stacking=do_stacking)
   #plot and table
   plots_and_tables<- plot_table(
     rp=rp,

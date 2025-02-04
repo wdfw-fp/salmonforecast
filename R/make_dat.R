@@ -17,9 +17,9 @@ make_dat <- function(dat1,
   ,"lag5_log_adults"
   ,"lag1_log_SAR" #snake river sockeye PIT SAR
   ,"lag2_log_SAR" #snake river sockeye PIT SAR
-  ,"lag1_NPGO"
+  # ,"lag1_NPGO"
   ,"lag1_PDO"
-  ,"lag2_NPGO"
+  # ,"lag2_NPGO"
   ,"lag2_PDO"
   # ,"WSST_A"
   #NOAA Ocean Indicators
@@ -61,35 +61,39 @@ make_dat <- function(dat1,
         filter(!PDO < -99)%>%
         mutate(Date=as.Date(Date),Month=month(Date),Year=as.integer(year(Date)))%>%
         group_by(Year)%>%
-        dplyr::add_tally()%>%
+        add_tally()%>%
         #filter(!Month>6)%>% #use only spring (Jan-June) NPGO
         #filter(!n < 12)%>% #use only complete years
         group_by(Year)%>%
         dplyr::rename(year=Year)%>%
         dplyr::summarise(PDO=mean(PDO))%>%
-
-        dplyr::select(year,PDO) %>%
-        mutate(lag1_PDO = lag(c(scale(PDO))),
-               lag2_PDO = lag(c(scale(PDO)),2))
+        right_join(Yrlist)%>%
+        mutate(lag1_PDO = lag(PDO,1),
+               lag2_PDO = lag(PDO,2))%>%
+        dplyr::select(year,lag1_PDO,lag2_PDO)%>%
+        filter(!is.na(lag1_PDO))
 
       #=========================================================
       #get NPGO data
       #=========================================================
-      NPGO<-read_table("http://www.o3d.org/npgo/npgo.php",skip=29,col_names=F,comment="#")%>%
+      NPGO<-read_table("https://www.o3d.org/npgo/data/NPGO.txt",skip=29,col_names=F,comment="#")%>%
         filter(!is.na(X2))%>%
         dplyr::rename(Year=X1,Month=X2,NPGO=X3)%>%
         mutate(Year=as.integer(as.numeric(Year)))%>%
         group_by(Year)%>%
         add_tally()%>%
-        #filter(!Month>6)%>% #use only spring (Jan-June) NPGO
+        filter(between(Month,4,5))%>% #use only spring (Jan-June) NPGO
         #filter(!n < 12)%>% #use only complete years
         group_by(Year)%>%
         dplyr::summarise(NPGO=mean(NPGO))%>%
         dplyr::rename(year=Year)%>%
+        right_join(Yrlist)%>%
+        mutate(lag1_NPGO = lag(NPGO),
+               lag2_NPGO = lag(NPGO,2))%>%
 
-        dplyr::select(year,NPGO) %>%
-        mutate(lag1_NPGO = lag(c(scale(NPGO))),
-               lag2_NPGO = lag(c(scale(NPGO)),2))
+        arrange(year)%>%
+        dplyr::select(year,lag1_NPGO,lag2_NPGO)#%>%
+      # filter(!is.na(lag1_NPGO))
       #=========================================================
       #get NOAA indicator data, wrangle into usable format
       #=========================================================
@@ -178,7 +182,7 @@ make_dat <- function(dat1,
         ungroup %>%
         # left_join(Yrlist)%>%
         left_join(PDO)%>%
-        left_join(NPGO)%>%
+        # left_join(NPGO)%>%
         left_join(indicators)%>%
         left_join(enso)#%>%
         # left_join(ssta)%>%

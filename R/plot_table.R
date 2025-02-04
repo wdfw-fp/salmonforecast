@@ -6,6 +6,7 @@
 #' @param rp Rolling performance data.
 #' @param ens Ensemble model data.
 #' @param dat the input data with columns "year" and "abundance"
+#' @param benchmark info on a  model to be compared to
 #'
 #' @return A list containing tables and plots summarizing the forecasting results.
 #'
@@ -22,6 +23,7 @@ plot_table<-function(
     dat,
     stack_metric,
     rolling_year_window,
+    benchmark=NULL,
     output_path = "outputs"
 
   ){
@@ -30,12 +32,19 @@ plot_table<-function(
     rp$performance %>% mutate(model="Best_individual") %>% bind_rows(
       ens$forecast_skill %>%filter(grepl("weight",model))
     )  %>%
-    arrange(MAPE)
+    {if(!is.null(benchmark)){
+      bind_rows(.,benchmark$perf) %>%
+    arrange(MAPE)}else{
+      .
+    }
+    }
 
 
 
 
-  Table2<-for_skill%>% mutate(model=sub("_"," ",model))%>% rename(Model=model)%>%
+
+  Table2<-for_skill%>% mutate(model=sub("_"," ",model),
+                              )%>% rename(Model=model)%>%
     kbl(caption = paste0("Table 2. One step ahead individual and ensemble model performance"),digits =2)%>%
     kable_classic(full_width = F, html_font = "Cambria")
 
@@ -55,7 +64,9 @@ plot_table<-function(
 
 
   best_model<-for_skill$model[1]
-
+if(!grepl("weight",best_model)){
+  best_model<-for_skill$model[2]
+}
 
   results_best<-rp$top_mods %>% filter(rank==1) %>% mutate(model="Best_individual") %>% bind_rows(
     ens$ensembles %>% left_join(dat %>% dplyr::select(year,abundance)) %>% mutate(model_name=model)
@@ -88,9 +99,22 @@ plot_table<-function(
 
 
 
-  Figure2<-ggplot(rp$top_mods %>% filter(rank==1) %>% mutate(model="Best_individual")%>% bind_rows(
-    ens$ensembles%>% left_join(dat %>% dplyr::select(year,abundance)) %>% mutate(model_name=model)),aes(x=year,y=predicted_abundance,col=model))+
-  geom_line()+
+  Figure2<-ggplot(
+
+    rp$top_mods %>% filter(rank==1) %>% mutate(model="Best_individual")%>% bind_rows(
+    ens$ensembles%>% left_join(dat %>% dplyr::select(year,abundance)) %>% mutate(model_name=model)) %>%
+      filter(model==best_model)
+
+
+    ,aes(x=year,y=predicted_abundance,col=model))+
+  geom_line()
+
+  if(!is.null(benchmark)){
+    Figure2<- Figure2+
+  geom_line(data=benchmark$forecasts,mapping=aes(x=year,y=predicted_abundance),size=1.25,col="grey")
+  }
+
+  Figure2<- Figure2+
   geom_point(aes(x=year,y=abundance),color="black")+
   ylim(0,NA)+
   scale_x_continuous(breaks=unique(results_best$year))+

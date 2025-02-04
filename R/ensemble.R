@@ -1,6 +1,7 @@
 #' @name ensemble
 #' @title Ensemble Forecasting Function
 #' @description A function that generates ensemble forecasts based on input forecasts and series data.
+#'
 #' @param forecasts A data frame containing model forecasts.
 #' @param series A data frame containing observed time series data.
 #' @param TY_ensemble The number of years to consider for ensemble generation.
@@ -8,7 +9,9 @@
 #' @param slide The length of the sliding window for calculating ensemble weights
 #' @param stretch Boolean whether to stretch rather than slide
 #' @param num_models The number of top models to consider in each iteration.
+#' @param do_stacking whether to include stacking model weights
 #' @param stack_metric The metric to use for stacking weights.
+#'
 #' @return A list containing final model weights, forecast skill evaluation, ensembles, and updated forecasts.
 #' @importFrom tidyr pivot_wider pivot_longer
 #' @importFrom purrr pluck
@@ -16,7 +19,7 @@
 #' @importFrom dplyr summarise filter left_join select mutate group_by arrange bind_rows ungroup pull
 #' @importFrom MCMCpack rdirichlet
 #' @export
-ensemble <- function(forecasts, series, TY_ensemble, k, slide, num_models, stack_metric, stretch = FALSE) {
+ensemble <- function(forecasts, series, TY_ensemble, k, slide, num_models, stack_metric, stretch = FALSE,do_stacking=TRUE) {
 
   yrrange <- forecasts %>%
     dplyr::summarise(minyr = min(year), maxyr = max(year)) %>%
@@ -61,7 +64,9 @@ ensemble <- function(forecasts, series, TY_ensemble, k, slide, num_models, stack
 
     modelcnt <- num_models
 
-    stackdat <- forecasts %>%
+
+    if(do_stacking){
+      stackdat <- forecasts %>%
       dplyr::filter(
         model %in% c(forecasts %>%
                        dplyr::filter(year == i + 1, rank <= num_models) %>%
@@ -71,6 +76,9 @@ ensemble <- function(forecasts, series, TY_ensemble, k, slide, num_models, stack
       tidyr::pivot_wider(names_from = model, values_from = predicted_abundance, id_cols = year) %>%
       dplyr::left_join(series %>% dplyr::select(year, abundance)) %>%
       ungroup()
+
+
+
 
     stack_weights <- find_stack_weights(tau = 1,
                                         n = 10000,
@@ -85,10 +93,17 @@ ensemble <- function(forecasts, series, TY_ensemble, k, slide, num_models, stack
                                           dplyr::select(abundance & !year) %>%
                                           as.matrix()
     )
+
+
     stacking_weights <- data.frame("Stacking_weight" = as.vector(round(unlist(stack_weights[[1]]), 4)))
     stacking_weights$model <- colnames(stackdat)[!colnames(stackdat) %in% c("year", "abundance")]
     tdat <- tdat %>%
       dplyr::left_join(stacking_weights)
+    }else{
+         tdat <-tdat |> mutate(Stacking_weight=1)
+    }
+
+
 
     tdat2 <- forecasts %>%
       dplyr::filter(
@@ -116,6 +131,10 @@ ensemble <- function(forecasts, series, TY_ensemble, k, slide, num_models, stack
                           cols = c("MSA_weighted", "RMSE_weighted", "MAPE_weighted", "Stack_weighted"),
                           values_to = "value") %>%
       tidyr::pivot_wider(id_cols = c("year", "model"), names_from = Parameter, values_from = value)
+
+    if(!do_stacking){
+      tdat2<-tdat2[tdat2$model!="Stack_weighted",]
+    }
 
     # # Add "Best individual" rows with correct performance metrics
     # tdat2 <- dplyr::bind_rows(
