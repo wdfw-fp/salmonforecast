@@ -6,6 +6,7 @@
 #' @param observed Observed values.
 #' @param weighted Logical, indicating whether to calculate weighted metrics.
 #' @return A data frame with calculated performance metrics.
+#' @export
 calculate_performance_metrics <- function(predicted, observed, weighted = FALSE) {
   # Combine predicted and observed into a data frame
   data <- data.frame(predicted, observed)
