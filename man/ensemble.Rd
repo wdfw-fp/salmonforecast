@@ -9,6 +9,7 @@ ensemble(
   series,
   TY_ensemble,
   k,
+  min_ens_yrs = 5,
   slide,
   num_models,
   stack_metric,

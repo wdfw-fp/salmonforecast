@@ -37,7 +37,7 @@ arima_forecast(
 \item{freq}{Frequency of the time series}
 }
 \value{
-return value.
+A description of the return value.
 }
 \description{
 A comprehensive R package for time series analysis, forecasting, and regression modeling.

@@ -17,9 +17,7 @@ one_step_ahead(
   forecast_period_start_m,
   forecast_period_start_d,
   stack_metric,
-  k,
-  n_cores = 2,
-  include_mod = FALSE
+  k
 )
 }
 \arguments{
@@ -46,8 +44,6 @@ one_step_ahead(
 \item{stack_metric}{A metric used for stacking models.}
 
 \item{k}{A parameter for the model evaluation.}
-
-\item{n_cores}{number of cores to use in parallel computing}
 }
 \value{
 A data frame containing forecasts and other information.
