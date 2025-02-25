@@ -18,7 +18,8 @@ one_step_ahead(
   forecast_period_start_d,
   stack_metric,
   k,
-  n_cores = 2
+  n_cores = 2,
+  include_mod = FALSE
 )
 }
 \arguments{
