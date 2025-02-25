@@ -74,7 +74,8 @@ arima_forecast <- function(tdat, xreg, xreg_pred, last_train_yr, first_forecast_
       tdat <- tdat %>%
         dplyr::bind_cols(performance_metrics)
 
-      return(list(pred = pred, CI = CI, arma = paste(m1$arma, collapse = ""), aicc = m1$aicc))
+      return(list(pred = pred, CI = CI, arma = paste(m1$arma, collapse = ""), aicc = m1$aicc,eq=equatiomatic::extract_eq(m1,use_coefs=TRUE),
+                  mod=m1))
       if (write_model_summaries == TRUE) {
         sink("summary.txt", append = TRUE)
         print(summary(m1))
@@ -93,7 +94,9 @@ arima_forecast <- function(tdat, xreg, xreg_pred, last_train_yr, first_forecast_
           tidyr::pivot_wider(names_from = names, values_from = value) %>%
           dplyr::mutate(year = last_train_yr + 1, period = 1),
         arma = paste(m1$arma, collapse = ""),
-        aicc = m1$aicc
+        aicc = m1$aicc,
+        eq=equatiomatic::extract_eq(m1,use_coefs=TRUE),
+        mod=m1
       ))
     }
   )

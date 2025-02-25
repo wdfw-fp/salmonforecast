@@ -36,7 +36,9 @@ one_step_ahead <- function(series,
                            forecast_period_start_d, # inclusive
                            stack_metric,
                            k,
-                           n_cores=2
+                           n_cores=2,
+
+                           include_mod=FALSE
 ) {
 
 
@@ -101,9 +103,19 @@ one_step_ahead <- function(series,
             dplyr::bind_cols(data.frame(
               predicted_abundance = pred,
               arma = temp$arma,
-              aicc = temp$aicc)) %>%
+              aicc = temp$aicc))
+
+          if(include_mod){
+            tdat<-tdat %>%bind_cols(tibble(
+              mod=list(mod=temp$mod),
+              eq=temp$eq))
+          }
+
+
+          tdat<-tdat %>%
             dplyr::left_join(CI, by = c("year", "period")) %>%
             dplyr::mutate(model = as.character(c))
+
 
           if (c == 1) {
             forecasts <- tdat

@@ -13,7 +13,8 @@ ensemble(
   num_models,
   stack_metric,
   stretch = FALSE,
-  do_stacking = TRUE
+  do_stacking = TRUE,
+  alpha = 0
 )
 }
 \arguments{

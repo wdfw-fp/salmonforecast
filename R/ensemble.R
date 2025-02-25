@@ -19,7 +19,7 @@
 #' @importFrom dplyr summarise filter left_join select mutate group_by arrange bind_rows ungroup pull
 #' @importFrom MCMCpack rdirichlet
 #' @export
-ensemble <- function(forecasts, series, TY_ensemble, k, slide, num_models, stack_metric, stretch = FALSE,do_stacking=TRUE) {
+ensemble <- function(forecasts, series, TY_ensemble, k, slide, num_models, stack_metric, stretch = FALSE,do_stacking=TRUE,alpha=0) {
 
   yrrange <- forecasts %>%
     dplyr::summarise(minyr = min(year), maxyr = max(year)) %>%
@@ -39,7 +39,7 @@ ensemble <- function(forecasts, series, TY_ensemble, k, slide, num_models, stack
     }else{
       years <- seq(to = i, length.out = slide)
     }
-
+max_year<-i
     tdat <- forecasts %>%
       dplyr::filter(
         model %in% c(forecasts %>%
@@ -49,12 +49,16 @@ ensemble <- function(forecasts, series, TY_ensemble, k, slide, num_models, stack
       dplyr::filter(year %in% years) %>%
       dplyr::left_join(series, by = "year") %>%
       dplyr::select(year, model, predicted_abundance, abundance = abundance.x) %>%
-      dplyr::mutate(error = abundance - predicted_abundance) %>%
+      dplyr::ungroup() |>
+      dplyr::mutate(error = abundance - predicted_abundance,
+                    year_dif=max_year-year+1,
+                    exp_smooth_weight=if(alpha!=0){alpha*(1-alpha)^year_dif}else{1}) %>%
       dplyr::filter(!is.na(error)) %>%
       dplyr::group_by(model) %>%
-      dplyr::summarise(RMSE = sqrt(mean(error^2)),
-                       MAPE = mean(abs(error / abundance)) * 100,
-                       MSA = 100 * (exp(mean(abs(log(abundance / predicted_abundance)))) - 1)
+      dplyr::summarize(RMSE = sqrt(weighted.mean(error^2,exp_smooth_weight)),
+                       MAPE = weighted.mean(abs(error / abundance),exp_smooth_weight),
+                       ,
+                       MSA = 100 * (exp(weighted.mean(abs(log(abundance / predicted_abundance)),exp_smooth_weight)) - 1)
       ) %>%
       dplyr::arrange(MSA) %>%
       dplyr::mutate(MSA_weight = (1 / MSA)^k / sum((1 / MSA)^k),
@@ -75,7 +79,7 @@ ensemble <- function(forecasts, series, TY_ensemble, k, slide, num_models, stack
       dplyr::filter(year %in% years) %>%
       tidyr::pivot_wider(names_from = model, values_from = predicted_abundance, id_cols = year) %>%
       dplyr::left_join(series %>% dplyr::select(year, abundance)) %>%
-      ungroup()
+        dplyr::ungroup()
 
 
 
@@ -102,7 +106,6 @@ ensemble <- function(forecasts, series, TY_ensemble, k, slide, num_models, stack
     }else{
          tdat <-tdat |> mutate(Stacking_weight=1)
     }
-
 
 
     tdat2 <- forecasts %>%
@@ -158,6 +161,7 @@ ensemble <- function(forecasts, series, TY_ensemble, k, slide, num_models, stack
 
     ensembles <- dplyr::bind_rows(ensembles, tdat2)
   }
+
 
   # function to evaluate forecast skill ()
   evaluate_forecasts2 <- function(forecasts, observations) {

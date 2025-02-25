@@ -64,7 +64,8 @@ do_forecast<-function(
     num_models=10,
     n_cores=2,
     ts_freq=1,
-    seasonal=FALSE
+    seasonal=FALSE,
+    exp_smooth_alpha=0
 
 
 ){
@@ -108,7 +109,8 @@ do_forecast<-function(
                    roll_years = TY_ensemble-1,
                    mod_include = 10,
                    TY_ensemble = TY_ensemble,
-                   model_list = model_list)
+                   model_list = model_list,
+                   alpha=exp_smooth_alpha)
 
 
   ens<-ensemble(forecasts=(rp$all_mods %<>% dplyr::group_by(year) %>% dplyr::mutate(rank=rank(MAPE)) %>% dplyr::ungroup()),
@@ -118,7 +120,8 @@ do_forecast<-function(
                 slide=slide,
                 num_models=num_models,
                 stack_metric="MAPE",
-                do_stacking=do_stacking)
+                do_stacking=do_stacking,
+                alpha=exp_smooth_alpha)
   #plot and table
   plots_and_tables<- plot_table(
     rp=rp,

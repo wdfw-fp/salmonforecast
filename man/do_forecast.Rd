@@ -24,7 +24,8 @@ do_forecast(
   num_models = 10,
   n_cores = 2,
   ts_freq = 1,
-  seasonal = FALSE
+  seasonal = FALSE,
+  exp_smooth_alpha = 0
 )
 }
 \arguments{
