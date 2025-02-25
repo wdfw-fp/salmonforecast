@@ -19,7 +19,7 @@
 #' @importFrom dplyr summarise filter left_join select mutate group_by arrange bind_rows ungroup pull
 #' @importFrom MCMCpack rdirichlet
 #' @export
-ensemble <- function(forecasts, series, TY_ensemble, k, slide, num_models, stack_metric, stretch = FALSE,do_stacking=TRUE,alpha=0) {
+ensemble <- function(forecasts, series, TY_ensemble, k, min_ens_yrs=5, slide, num_models, stack_metric, stretch = FALSE,do_stacking=TRUE,alpha=0) {
 
   yrrange <- forecasts %>%
     dplyr::summarise(minyr = min(year), maxyr = max(year)) %>%
@@ -34,10 +34,20 @@ ensemble <- function(forecasts, series, TY_ensemble, k, slide, num_models, stack
   ensembles <- NULL
   for (i in (yrrange[2] - TY_ensemble):maxdata_year) {
 
-    if(stretch){
-      #Xiaotian fill this in
-    }else{
-      years <- seq(to = i, length.out = slide)
+
+
+    if (stretch) {
+      # Determine the min_ens_yrs based on the current year (i) and TY_ensemble
+      ens_yrs  <- i - (yrrange[2] - TY_ensemble)+ min_ens_yrs
+
+
+      # Generate the sequence of years
+      years <- seq(to = i, length.out = ens_yrs)
+    } else {
+      # Check if stretched is less than 3
+      if (min_ens_yrs < 3) {
+        stop("Error: 'min_ens_yrs' should not be less than 3.")}
+      years <- seq(to = i, length.out = min_ens_yrs)
     }
 max_year<-i
     tdat <- forecasts %>%
@@ -192,7 +202,6 @@ max_year<-i
     dplyr::mutate(error = predicted_abundance - abundance,
                   pct_error = scales::percent(error / abundance)
     ) %>%
-    # dplyr::left_join(tdat %>% dplyr::select(model, Stacking_weight))
     dplyr::left_join(tdat %>% dplyr::select(model, Stacking_weight)) %>%
     dplyr::group_by(model) %>%
     dplyr::summarize(

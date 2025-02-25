@@ -1,4 +1,3 @@
-
 test_that("Test find_stack_weights function", {
   set.seed(123)
   load_or_generate_data <- function(use_rda = TRUE, excel_path = NULL) {
@@ -164,8 +163,8 @@ test_that("Test find_stack_weights function", {
                             first_forecast_period = first_forecast_period,
                             plot_results = plot_results,
                             write_model_summaries = write_model_summaries,
-                            forecast_period_start_m =  forecast_period_start_m, #inclusive
-                            forecast_period_start_d =  forecast_period_start_d, #inclusive
+                            forecast_period_start_m =  forecast_period_start_m,
+                            forecast_period_start_d =  forecast_period_start_d,
                             stack_metric = stack_metric,
                             k=k
     )
@@ -178,8 +177,6 @@ test_that("Test find_stack_weights function", {
   }
 
 
-
-  #expect_true("model" %in% names(results), "The 'results' data frame should have a 'model' column.")
   #calculate rolling performance
   ## rolling_year_window<-15
   rp<-rolling_perf(results,dat,rolling_year_window,3,TY_ensemble,model_list)

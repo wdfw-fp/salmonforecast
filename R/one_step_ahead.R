@@ -13,7 +13,7 @@
 #' @param forecast_period_start_d The starting day for the forecast period (inclusive).
 #' @param stack_metric A metric used for stacking models.
 #' @param k A parameter for the model evaluation.
-#' @param n_cores number of cores to use in parallel computing
+#'
 #' @return A data frame containing forecasts and other information.
 #'
 #' @export
@@ -35,10 +35,7 @@ one_step_ahead <- function(series,
                            forecast_period_start_m, # inclusive
                            forecast_period_start_d, # inclusive
                            stack_metric,
-                           k,
-                           n_cores=2,
-
-                           include_mod=FALSE
+                           k
 ) {
 
 
@@ -60,8 +57,6 @@ one_step_ahead <- function(series,
       )
     )
 
-  # Determine if any covariate columns have NA values
-  #has_na_covariates <- colSums(is.na(filtered_series[, covariates])) > 0
 
   #cl <- makeCluster(parallel::detectCores() - 3)
   cl <- makeCluster(n_cores)

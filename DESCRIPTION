@@ -33,5 +33,6 @@ Imports:
     magrittr,
     knitr,
     kableExtra,
-    ggplot2
+    ggplot2,
+    rvest
 LazyData: true

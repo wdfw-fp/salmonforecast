@@ -39,13 +39,7 @@ find_stack_weights<-function(tau,metric,n,initial_weights,preds,obs){
       skill=get(metric)
       weights=tweights
     }
-    # if(get(metric)<skill){
-    #   skill=get(metric)
-    #   weights=tweights
-    #   cnt<-1
-    # } else {
-    #   cnt<-cnt+1
-    # }
+
 
     if (is.na(get(metric)) || get(metric) < skill) {
       skill = get(metric)
@@ -59,7 +53,6 @@ find_stack_weights<-function(tau,metric,n,initial_weights,preds,obs){
 
     skill_list<-c(skill_list,min(get(metric),skill))
     keep<-rbinom(1,prob=skill/get(metric),1)
-    #if(keep==1){tweights=tweights }else(tweights=weights)
     if (!is.na(keep) && keep == 1) {
       tweights = tweights
     } else {

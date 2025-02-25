@@ -61,13 +61,13 @@ make_dat <- function(dat1,
         filter(!PDO < -99)%>%
         mutate(Date=as.Date(Date),Month=month(Date),Year=as.integer(year(Date)))%>%
         group_by(Year)%>%
-        add_tally()%>%
+        dplyr::add_tally()%>%
         #filter(!Month>6)%>% #use only spring (Jan-June) NPGO
         #filter(!n < 12)%>% #use only complete years
         group_by(Year)%>%
         dplyr::rename(year=Year)%>%
         dplyr::summarise(PDO=mean(PDO))%>%
-        right_join(Yrlist)%>%
+        dplyr::right_join(Yrlist)%>%
         mutate(lag1_PDO = lag(PDO,1),
                lag2_PDO = lag(PDO,2))%>%
         dplyr::select(year,lag1_PDO,lag2_PDO)%>%

@@ -51,15 +51,6 @@ rolling_perf <- function(one_aheads, series, roll_years, mod_include, TY_ensembl
     dplyr::left_join(model_list, by = "model") %>%
     dplyr::arrange(dplyr::desc(year), rank)
 
-  # performance of the best model
-  # perf <- tops %>%
-  #   dplyr::ungroup() %>%
-  #   dplyr::filter(rank == 1) %>%
-  #   dplyr::summarize(
-  #     MAPE = mean(APE, na.rm = TRUE) * 100,
-  #     RMSE = sqrt(mean(error^2, na.rm = TRUE)),
-  #     MSA = 100 * (exp(mean(abs(log(abundance / predicted_abundance)), na.rm = TRUE)) - 1)
-  #   )
 
   # Use the new function for performance metrics calculation
   perf <- tops %>%

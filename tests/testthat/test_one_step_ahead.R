@@ -102,7 +102,7 @@ test_that("Test one_step_ahead function", {
 
   # Call the 'one_step_ahead' function with the defined input parameters
   # Ensure that 'best_covariates' is appropriately defined in your code
-  results <- one_step_ahead(series = dat,  # Replace your_package_name
+  results <- one_step_ahead(series = dat,
                             leave_yrs = leave_yrs,
                             TY_ensemble = TY_ensemble,
                             covariates =best_covariates[[1]],  # Uncomment and adjust as needed
@@ -112,8 +112,10 @@ test_that("Test one_step_ahead function", {
                             forecast_period_start_m = forecast_period_start_m, # inclusive
                             forecast_period_start_d = forecast_period_start_d, # inclusive
                             stack_metric = stack_metric,
-                            k = k
+                            k = k,
+                            n_cores=2
   )
+
 
   # Use 'expect' functions to check the structure and content of 'results'
   expect_true(is.data.frame(results))

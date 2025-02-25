@@ -105,6 +105,7 @@ test_that("Test ensemble function", {
   stack_metric<-"MAPE"
   num_models<-3
   rolling_year_window<-15
+  stretch=F
 
   inputs<-list(
     yr_start = yr_start,
@@ -185,36 +186,24 @@ test_that("Test ensemble function", {
     series = dat,
     TY_ensemble = TY_ensemble,
     k = k,
-    slide = 15,
+    min_ens_yrs = 3,
+    #leave_yrs=31,
     num_models=num_models,
-    stack_metric=stack_metric
+    stack_metric=stack_metric,
+    stretch=stretch
   )
 
 
 
-
-  # Ensure consistent data types for numeric columns in final_model_weights
-  final_model_weights$RMSE <- as.numeric(final_model_weights$RMSE)
-  final_model_weights$MAPE <- as.numeric(final_model_weights$MAPE)
-
-  # Check for duplicates in row names
-  if (anyDuplicated(row.names(final_model_weights))) {
-    stop("Duplicate row names found in final_model_weights.")
-  }
-
-  # Check for missing values in row names
-  if (anyNA(row.names(final_model_weights))) {
-    stop("Missing row names found in final_model_weights.")
-  }
-
-  # Fix variable name inconsistency (Stack_weighted vs Stacking_weight)
-  final_model_weights$Stack_weighted <- final_model_weights$Stacking_weight
-  final_model_weights <- final_model_weights[, !grepl("Stacking_weight", names(final_model_weights))]
-
   # Assuming 'ens' is your data frame
   expect_true(!is.null(ens))
+  # Save to CSV
+  #write.csv(ens, "outputs/ensemble.csv", row.names = FALSE)
 
+  # Save to RDS
+  #saveRDS(ens, "outputs/ensemble.rds")
   # Print the first 10 rows of 'ens'
   print(head(ens, n = 10))
-
 })
+
+
