@@ -7,8 +7,8 @@
 make_dat(
   dat1,
   covariates = c("lag1_log_Jack", "lag4_log_adults", "lag5_log_adults", "lag1_log_SAR",
-    "lag2_log_SAR", "lag1_NPGO", "lag1_PDO", "lag2_NPGO", "lag2_PDO", "lag2_PC1",
-    "lag2_PC2", "lag2_sp_phys_trans", "pink_ind", "lag1_log_socksmolt")
+    "lag2_log_SAR", "lag1_PDO", "lag2_PDO", "lag2_PC1", "lag2_PC2", "lag2_sp_phys_trans",
+    "pink_ind", "lag1_log_socksmolt")
 )
 }
 \arguments{

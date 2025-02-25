@@ -10,7 +10,8 @@ rolling_perf(
   roll_years,
   mod_include,
   TY_ensemble,
-  model_list
+  model_list,
+  alpha = 0
 )
 }
 \arguments{

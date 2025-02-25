@@ -5,6 +5,8 @@
 #'
 #' @param rp Rolling performance data.
 #' @param ens Ensemble model data.
+#' @param dat the input data with columns "year" and "abundance"
+#' @param benchmark info on a  model to be compared to
 #'
 #' @return A list containing tables and plots summarizing the forecasting results.
 #'
@@ -20,6 +22,7 @@ plot_table<-function(
     ens,
     stack_metric,
     rolling_year_window,
+    benchmark=NULL,
     output_path = "outputs"
 
   ){
@@ -28,12 +31,19 @@ plot_table<-function(
     rp$performance %>% mutate(model="Best_individual") %>% bind_rows(
       ens$forecast_skill %>%filter(grepl("weight",model))
     )  %>%
-    arrange(MAPE)
+    {if(!is.null(benchmark)){
+      bind_rows(.,benchmark$perf) %>%
+    arrange(MAPE)}else{
+      .
+    }
+    }
 
 
 
 
-  Table2<-for_skill%>% mutate(model=sub("_"," ",model))%>% rename(Model=model)%>%
+
+  Table2<-for_skill%>% mutate(model=sub("_"," ",model),
+                              )%>% rename(Model=model)%>%
     kbl(caption = paste0("Table 2. One step ahead individual and ensemble model performance"),digits =2)%>%
     kable_classic(full_width = F, html_font = "Cambria")
 
@@ -52,7 +62,9 @@ plot_table<-function(
 
 
   best_model<-for_skill$model[1]
-
+if(!grepl("weight",best_model)){
+  best_model<-for_skill$model[2]
+}
 
   results_best<-rp$top_mods %>% filter(rank==1) %>% mutate(model="Best_individual") %>% bind_rows(
     ens$ensembles %>% left_join(dat %>% dplyr::select(year,abundance)) %>% mutate(model_name=model)
@@ -85,9 +97,22 @@ plot_table<-function(
 
 
 
-  Figure2<-ggplot(rp$top_mods %>% filter(rank==1) %>% mutate(model="Best_individual")%>% bind_rows(
-    ens$ensembles%>% left_join(dat %>% dplyr::select(year,abundance)) %>% mutate(model_name=model)),aes(x=year,y=predicted_abundance,col=model))+
-  geom_line()+
+  Figure2<-ggplot(
+
+    rp$top_mods %>% filter(rank==1) %>% mutate(model="Best_individual")%>% bind_rows(
+    ens$ensembles%>% left_join(dat %>% dplyr::select(year,abundance)) %>% mutate(model_name=model)) %>%
+      filter(model==best_model)
+
+
+    ,aes(x=year,y=predicted_abundance,col=model))+
+  geom_line()
+
+  if(!is.null(benchmark)){
+    Figure2<- Figure2+
+  geom_line(data=benchmark$forecasts,mapping=aes(x=year,y=predicted_abundance),size=1.25,col="grey")
+  }
+
+  Figure2<- Figure2+
   geom_point(aes(x=year,y=abundance),color="black")+
   ylim(0,NA)+
   scale_x_continuous(breaks=unique(results_best$year))+
@@ -99,14 +124,13 @@ plot_table<-function(
   Figure3<-ggplot((results_best ) %>% mutate(Model=sub("_"," ",model_name)) %>%  mutate(pct_error=log10(((predicted_abundance-abundance)/abundance)+1)) ,
                   aes(x=year,y=pct_error,color=Model))+geom_hline(yintercept=0)+geom_line(lwd=1.25)+scale_color_manual(values=c("darkblue","darkred"))+xlab("")+ylab(expression(paste(log[10], "(% error +1)")))
 
-  kableExtra::save_kable(Table2, file.path(output_path, "Table2.html"))
-  kableExtra::save_kable(Table3, file.path(output_path, "Table3.html"))
-  kableExtra::save_kable(Table4, file.path(output_path, "Table4.html"))
-
-
-  ggsave(file.path(output_path, "Figure1.png"), Figure1, width = 8, height = 6)
-  ggsave(file.path(output_path, "Figure2.png"), Figure2, width = 8, height = 6)
-  ggsave(file.path(output_path, "Figure3.png"), Figure3, width = 8, height = 6)
+  # kableExtra::save_kable(Table2, file.path(output_path, "Table2.html"))
+  # kableExtra::save_kable(Table3, file.path(output_path, "Table3.html"))
+  # kableExtra::save_kable(Table4, file.path(output_path, "Table4.html"))
+  #
+  # ggsave(file.path(output_path, "Figure1.png"), Figure1, width = 8, height = 6)
+  # ggsave(file.path(output_path, "Figure2.png"), Figure2, width = 8, height = 6)
+  # ggsave(file.path(output_path, "Figure3.png"), Figure3, width = 8, height = 6)
 
 return(
   list(
