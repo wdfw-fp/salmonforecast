@@ -60,6 +60,12 @@ do_forecast(
 \item{num_models}{Number of top models to consider in ensemble creation.}
 
 \item{n_cores}{number of cores to use in parallel computing}
+
+\item{ts_freq}{frequency for time series (generally 1)}
+
+\item{seasonal}{whether the arima models should include seasonal  components}
+
+\item{alpha}{the annual rate of decay per year used in weighting performance in metric  calculation for model selection and ensemble-weights}
 }
 \value{
 A list containing tables and plots summarizing the forecasting results and a list containing various outputs, including selected covariates, forecast results, rolling performance, ensemble models, and plots/tables.

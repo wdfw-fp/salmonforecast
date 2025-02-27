@@ -10,6 +10,7 @@
 #' @param mod_include The number of top-performing models to include (default is 5).
 #' @param TY_ensemble The number of years for the ensemble analysis (default: 16).
 #' @param model_list A data frame with information about each model, including the 'model' column.
+#' @param alpha the annual rate of decay per year used in weighting performance in metric  calculation for model selection
 #' @return A list with three elements:
 #'   - 'all_mods': A data frame with all models' performance metrics.
 #'   - 'top_mods': A data frame with the top-performing models' performance metrics.
@@ -36,7 +37,7 @@ rolling_perf <- function(one_aheads, series, roll_years, mod_include, TY_ensembl
     group_by(model) %>%
     mutate(
       # MAPE = dplyr::lag(100 * zoo::rollmean(APE, k = roll_years, fill = NA, align = "right")),
-      MAPE = dplyr::lag(100 * zoo::rollapply(data=APE, width = roll_years,\(x) weighted.mean(x,if(alpha==0)rep(1,roll_years)else (alpha*(1-alpha)^(roll_years:1))) , fill = NA, align = "right"))
+      MAPE = dplyr::lag(100 * zoo::rollapply(data=APE, width = roll_years,\(x) weighted.mean(x,if(alpha==0)rep(1,roll_years)else ((1-alpha)^(roll_years:1))) , fill = NA, align = "right"))
 
 
     ) %>%

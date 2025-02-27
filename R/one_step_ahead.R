@@ -7,11 +7,13 @@
 #' @param covariates A list of covariates to include in the model.
 #' @param first_forecast_period The first period for forecasting.
 #' @param ts_freq frequency of time series being forecasts
+#' @param seasonal whether the arima models should include seasonal  components
 #' @param plot_results A logical value to indicate whether to plot results.
 #' @param write_model_summaries A logical value to indicate whether to write model summaries.
 #' @param forecast_period_start_m The starting month for the forecast period (inclusive).
 #' @param forecast_period_start_d The starting day for the forecast period (inclusive).
 #' @param stack_metric A metric used for stacking models.
+#' @param alpha the annual rate of decay per year used in weighting performance in metric  calculation for weight calculation for ensemble
 #' @param k A parameter for the model evaluation.
 #'
 #' @return A data frame containing forecasts and other information.

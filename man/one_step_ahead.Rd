@@ -33,6 +33,8 @@ one_step_ahead(
 
 \item{ts_freq}{frequency of time series being forecasts}
 
+\item{seasonal}{whether the arima models should include seasonal  components}
+
 \item{plot_results}{A logical value to indicate whether to plot results.}
 
 \item{write_model_summaries}{A logical value to indicate whether to write model summaries.}
@@ -44,6 +46,8 @@ one_step_ahead(
 \item{stack_metric}{A metric used for stacking models.}
 
 \item{k}{A parameter for the model evaluation.}
+
+\item{alpha}{the annual rate of decay per year used in weighting performance in metric  calculation for weight calculation for ensemble}
 }
 \value{
 A data frame containing forecasts and other information.
