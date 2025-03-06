@@ -18,6 +18,9 @@
 #' @param max_vars Maximum number of covariates in a model.
 #' @param forecast_type Type of forecasting approach ("preseason" or other).
 #' @param num_models Number of top models to consider in ensemble creation.
+#' @param alpha the annual rate of decay per year used in weighting performance in metric  calculation for model selection and ensemble-weights
+#' @param ts_freq frequency for time series (generally 1)
+#' @param seasonal whether the arima models should include seasonal  components
 #' @param n_cores number of cores to use in parallel computing
 #'
 #' @return A list containing tables and plots summarizing the forecasting results and a list containing various outputs, including selected covariates, forecast results, rolling performance, ensemble models, and plots/tables.

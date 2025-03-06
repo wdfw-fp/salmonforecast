@@ -62,7 +62,7 @@ max_year<-i
       dplyr::ungroup() |>
       dplyr::mutate(error = abundance - predicted_abundance,
                     year_dif=max_year-year+1,
-                    exp_smooth_weight=if(alpha!=0){alpha*(1-alpha)^year_dif}else{1}) %>%
+                    exp_smooth_weight=if(alpha!=0){(1-alpha)^year_dif}else{1}) %>%
       dplyr::filter(!is.na(error)) %>%
       dplyr::group_by(model) %>%
       dplyr::summarize(RMSE = sqrt(weighted.mean(error^2,exp_smooth_weight)),

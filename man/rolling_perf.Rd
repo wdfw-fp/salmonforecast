@@ -26,6 +26,8 @@ rolling_perf(
 \item{TY_ensemble}{The number of years for the ensemble analysis (default: 16).}
 
 \item{model_list}{A data frame with information about each model, including the 'model' column.}
+
+\item{alpha}{the annual rate of decay per year used in weighting performance in metric  calculation for model selection}
 }
 \value{
 A list with three elements:
