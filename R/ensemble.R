@@ -38,17 +38,15 @@ ensemble <- function(forecasts, series, TY_ensemble, k, min_ens_yrs=5, slide, nu
 
     if (stretch) {
       # Determine the min_ens_yrs based on the current year (i) and TY_ensemble
-      ens_yrs  <- i - (yrrange[2] - TY_ensemble)+ min_ens_yrs
-
+      # ens_yrs  <- i - (yrrange[2] - TY_ensemble)+ min_ens_yrs
 
       # Generate the sequence of years
-      years <- seq(to = i, length.out = ens_yrs)
+      years <- yrrange[1]:i #seq(to = i, length.out = ens_yrs)
     } else {
-      # Check if stretched is less than 3
-      if (min_ens_yrs < 3) {
-        stop("Error: 'min_ens_yrs' should not be less than 3.")}
-      years <- seq(to = i, length.out = min_ens_yrs)
+      years <- seq(to = i, length.out = slide)
     }
+
+
 max_year<-i
     tdat <- forecasts %>%
       dplyr::filter(
