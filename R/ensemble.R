@@ -78,6 +78,7 @@ max_year<-i
 
 
     if(do_stacking){
+
       stackdat <- forecasts %>%
       dplyr::filter(
         model %in% c(forecasts %>%
@@ -176,13 +177,19 @@ max_year<-i
     forecast_skill <- forecasts %>%
       # left_join(observations,by=c("Year","runsize_obs"))%>%
       dplyr::select(year, model, abundance, predicted_abundance) %>%
-      dplyr::mutate(error = predicted_abundance - abundance) %>%
+      dplyr::arrange(year) |>
+      dplyr::group_by(model) %>%
+      dplyr::mutate(error = predicted_abundance - abundance,,
+                    naive_error=abundance-dplyr::lag(abundance)
+                    ) %>%
       dplyr::filter(!is.na(error)) %>%
       dplyr::group_by(model) %>%
       dplyr::summarise(
         MAPE = mean(abs(error / abundance)) * 100,
         RMSE = sqrt(mean(error^2)),
-        MSA = 100 * (exp(mean(abs(log(abundance / predicted_abundance)))) - 1)
+        MSA = 100 * (exp(mean(abs(log(abundance / predicted_abundance)))) - 1),
+        MASE=mean(abs(error),na.rm=T)/mean(abs(naive_error),na.rm=T)
+
       ) %>%
       dplyr::arrange(MAPE)
     return(forecast_skill)

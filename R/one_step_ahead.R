@@ -1,6 +1,7 @@
 #' @name one_step_ahead
 #' @title Function to evaluate the performance of ARIMA model (produces season total forecasts only)
 #' @description This function evaluates the performance of an ARIMA model for season total forecasts using provided covariates and other parameters.
+#'
 #' @param series A data frame containing the time series data.
 #' @param leave_yrs Number of years to leave out during the evaluation.
 #' @param TY_ensemble A parameter for ensemble evaluation.
@@ -11,10 +12,9 @@
 #' @param plot_results A logical value to indicate whether to plot results.
 #' @param write_model_summaries A logical value to indicate whether to write model summaries.
 #' @param forecast_period_start_m The starting month for the forecast period (inclusive).
+#' @param n_cores
+#' @param include_mod
 #' @param forecast_period_start_d The starting day for the forecast period (inclusive).
-#' @param stack_metric A metric used for stacking models.
-#' @param alpha the annual rate of decay per year used in weighting performance in metric  calculation for weight calculation for ensemble
-#' @param k A parameter for the model evaluation.
 #'
 #' @return A data frame containing forecasts and other information.
 #'
@@ -36,8 +36,8 @@ one_step_ahead <- function(series,
                            write_model_summaries,
                            forecast_period_start_m, # inclusive
                            forecast_period_start_d, # inclusive
-                           stack_metric,
-                           k
+                           n_cores,
+                           include_mod=FALSE
 ) {
 
 
@@ -48,7 +48,7 @@ one_step_ahead <- function(series,
   }
 
 
-
+  forecasts<-NULL
   filtered_series<-series%>%
     ungroup()%>%
     dplyr::select(year,species,period,abundance,all_of(unique(unlist(covariates))))%>%
@@ -69,20 +69,20 @@ one_step_ahead <- function(series,
     for (c in 1:length(covariates)) {
       last_train_yr <- max(filtered_series$year) - (leave_yrs - i + 1)
       tdat <- filtered_series %>%
-        filter(year <= (last_train_yr + 1)) %>%
-        mutate(train_test = ifelse(year > last_train_yr & period >= first_forecast_period, 1, 0)
+        dplyr::filter(year <= (last_train_yr + 1)) %>%
+        dplyr::mutate(train_test = ifelse(year > last_train_yr & period >= first_forecast_period, 1, 0)
         )
 
       xreg <- tdat %>%
-        filter(train_test == 0) %>%
-        ungroup() %>%
-        dplyr::select(all_of(covariates[[c]])) %>%
+        dplyr::filter(train_test == 0) %>%
+        dplyr::ungroup() %>%
+        dplyr::select(dplyr::all_of(covariates[[c]])) %>%
         as.matrix()
 
       xreg_pred <- tdat %>%
-        filter(train_test == 1) %>%
-        ungroup() %>%
-        dplyr::select(all_of(covariates[[c]])) %>%
+        dplyr::filter(train_test == 1) %>%
+        dplyr::ungroup() %>%
+        dplyr::select(dplyr::all_of(covariates[[c]])) %>%
         as.matrix()
 
       temp <- NULL
@@ -103,7 +103,7 @@ one_step_ahead <- function(series,
               aicc = temp$aicc))
 
           if(include_mod){
-            tdat<-tdat %>%bind_cols(tibble(
+            tdat<-tdat %>%dplyr::bind_cols(tibble::tibble(
               mod=list(mod=temp$mod),
               eq=temp$eq))
           }

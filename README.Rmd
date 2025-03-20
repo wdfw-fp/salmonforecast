@@ -1,0 +1,88 @@
+---
+output: github_document
+always_allow_html: true
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# SalmonForecasting
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The goal of SalmonForecasting is to make predictions of salmon returns for an upcoming year based on estimates of salmon returns in previous years and sets of predictors. The approach is to construct many ARIMA models with different subsets of predictors and generate ensembles. The ensembles are constructed by first evaluating the performance of each candidate model in a series of retrospective one-year-ahead predictions, then using the performance measures to select and weight predictions from candidate models. 
+
+## Installation
+
+You can install the development version of SalmonForecasting from [GitHub](https://github.com/wdfw-fp/salmonforecast) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("wdfw-fp/salmonforecast")
+```
+
+## Example
+
+Forecasts can be generated using the `do_forecast()` function, as shown below with a coho salmon dataset included in the package as an example. In this example, we include 11 different predictors, which include jack returns, smolt abundances, and ocean-environment indicators. This function can take some time depending on the total number of candidate models.
+
+```{r example, message=FALSE, warning=FALSE}
+library(SalmonForecasting)
+
+head(dat)
+
+forecast<-do_forecast(
+  dat,
+  covariates = c("lag1_log_JackOPI", "lag1_log_SmAdj", "lag1_NPGO", "lag1_PDO", "WSST_A",
+    "PDO.MJJ", "MEI.OND", "UWI.JAS", "SST.AMJ", "SSH.AMJ", "UWI.SON"),
+  TY_ensemble = 16,
+  slide = 15,
+  first_forecast_period = 1,
+  plot_results = FALSE,
+  write_model_summaries = TRUE,
+  forecast_period_start_m = 1,
+  forecast_period_start_d = 1,
+  do_stacking = FALSE,
+  stack_metric = "MAPE",
+  k = 1,
+  min_vars = 0,
+  max_vars = 1,
+  forecast_type = "preseason",
+  num_models = 10,
+  n_cores = 4,
+  ts_freq = 1,
+  seasonal = FALSE,
+  exp_smooth_alpha = 0
+)
+
+```
+
+
+```{r  message=FALSE, warning=FALSE}
+forecast$plots_and_tables$Table2
+```
+
+```{r  message=FALSE, warning=FALSE}
+forecast$plots_and_tables$Table3
+```
+
+```{r  message=FALSE, warning=FALSE}
+forecast$plots_and_tables$Table4
+```
+
+```{r  message=FALSE, warning=FALSE}
+forecast$plots_and_tables$Figure1
+```
+
+```{r  message=FALSE, warning=FALSE}
+forecast$plots_and_tables$Figure3
+```
+

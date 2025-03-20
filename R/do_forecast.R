@@ -57,14 +57,13 @@ do_forecast<-function(
     write_model_summaries = TRUE,
     forecast_period_start_m =  1, #inclusive
     forecast_period_start_d =  1, #inclusive
-    do_stacking=TRUE,
+    do_stacking=FALSE,
     stack_metric = "MAPE",
     k=1,
     min_vars=0,
     max_vars=1,
     forecast_type="preseason",
-    # rolling_year_window=15,
-    num_models=10,
+    num_models=25,
     n_cores=2,
     ts_freq=1,
     seasonal=FALSE,
@@ -90,11 +89,10 @@ do_forecast<-function(
                           write_model_summaries = write_model_summaries,
                           forecast_period_start_m =  forecast_period_start_m, #inclusive
                           forecast_period_start_d =  forecast_period_start_d, #inclusive
-                          stack_metric = stack_metric,
-                          k=k,
                           n_cores=n_cores,
                           ts_freq=ts_freq,
-                          seasonal=seasonal
+                          seasonal=seasonal,
+
   )
 
 
@@ -110,7 +108,7 @@ do_forecast<-function(
   rp<-rolling_perf(one_aheads=results,
                    series=dat,
                    roll_years = TY_ensemble-1,
-                   mod_include = 10,
+                   mod_include = num_models,
                    TY_ensemble = TY_ensemble,
                    model_list = model_list,
                    alpha=exp_smooth_alpha)
@@ -129,7 +127,6 @@ do_forecast<-function(
   plots_and_tables<- plot_table(
     rp=rp,
     ens=ens,
-    dat=dat,
     stack_metric=stack_metric,
     rolling_year_window=TY_ensemble-1
   )

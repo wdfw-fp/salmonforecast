@@ -93,7 +93,7 @@ if(!grepl("weight",best_model)){
     geom_line()+
     geom_point(aes(x=year,y=abundance))+
     ylim(0,NA)+
-    scale_x_continuous(breaks=unique(results_best$year))+ylab("Ocean abundance")+xlab("")
+    scale_x_continuous(breaks=unique(results_best$year))+ylab("Abundance")+xlab("")
 
 
 
