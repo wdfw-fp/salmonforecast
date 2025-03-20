@@ -78,7 +78,7 @@ forecast<-do_forecast(
   exp_smooth_alpha = 0
 )
 #> [1] "There are 12 models to fit! Fitting model number:"
-#> Time difference of 24.48273 secs
+#> Time difference of 23.32844 secs
 ```
 
 ``` r
@@ -1924,7 +1924,7 @@ individual model for a total of $\sum_{k = min}^{\max}{\binom{C}{k}}$
 unique covariate combinations. We fit ARIMA models with each combination
 of covariates to subsets of the data beginning with the first year of
 run size estimates (e.g., $t_{0} = 1970$) and running through subsequent
-years (e.g., $t \in \left\{ 2007,\ 2008,\ 2009\ldots\ 2022 \right\}$).
+years (e.g., $`t \in \left\{ 2007,\ 2008,\ 2009\ldots\ 2022 \right\}`$).
 We use each ARIMA model to forecast the run size in year $t + 1$ such
 that we generated unique one-year-ahead forecasts (e.g., for years
 2008–2023 in the example above). This allowed us to evaluate the
@@ -1941,7 +1941,7 @@ generic ARIMA model we used with no differencing and lag-1
 autoregressive and moving average components can be written as:
 
 *Eq.
-1.*${\ \log(y}_{t})\  = \ µ_{t} + \phi_{1}\left( \log(y_{t - 1}) - µ_{t - 1} \right)\  + \ \theta_{1}\varepsilon_{t - 1} + d + \ \varepsilon_{t}$
+1.*$`{\ \log(y}_{t})\  = \ µ_{t} + \phi_{1}\left( \log(y_{t - 1}) - µ_{t - 1} \right)\  + \ \theta_{1}\varepsilon_{t - 1} + d + \ \varepsilon_{t}`$
 
 where $y$ is the observed abundance in year $t$ ($y_{t})$, which after
 log transformation is equal to the sum of the log-mean abundance $µ_{t}$
@@ -1988,14 +1988,14 @@ symmetric accuracy (MSA; Equation 5), over the most recent 15 years for
 which abundance data were available:
 
 *Eq. 3.*
-$MAPE_{i} = \frac{\sum_{t = 2008}^{2022}{|{(\widehat{y}}_{i,t}^{\ } - y_{t}^{\ })/y_{t}^{\ }|}}{15}*100$*,*
+$`MAPE_{i} = \frac{\sum_{t = 2008}^{2022}{|{(\widehat{y}}_{i,t}^{\ } - y_{t}^{\ })/y_{t}^{\ }|}}{15}*100`$*,*
 
 *Eq. 4.*
-$RMSE_{i} = \sqrt{\frac{\sum_{t = 2008}^{2022}{{(\widehat{y}}_{i,t}^{\ } - y_{t}^{\ })}^{2}}{15}}$
+$`RMSE_{i} = \sqrt{\frac{\sum_{t = 2008}^{2022}{{(\widehat{y}}_{i,t}^{\ } - y_{t}^{\ })}^{2}}{15}}`$
 ,
 
 *Eq. 5.*
-${MSA}_{i} = \left\lbrack \exp\left( \frac{\sum_{t = 2008}^{2022}{|log(y_{t}^{\ }/{\widehat{y}}_{i,t}^{\ })}|}{15} \right) - 1 \right\rbrack$\*100,
+$`{MSA}_{i} = \left\lbrack \exp\left( \frac{\sum_{t = 2008}^{2022}{|log(y_{t}^{\ }/{\widehat{y}}_{i,t}^{\ })}|}{15} \right) - 1 \right\rbrack`$\*100,
 
 where $y_{t}^{\ }$ is the postseason estimate of abundance in year $t$
 and ${\widehat{y}}_{i,t}^{\ }$ is a preseason forecast. For all
@@ -2008,8 +2008,7 @@ We generated ensemble forecasts by taking weighted means (harmonic
 means) of the $M\, = \, 10\ $models with the lowest MAPE.
 
 *Eq. 6.*
-${\widehat{y}}_{t}^{\ } = \sum_{i}^{}{\omega_{i}{\widehat{y}}_{i,t}^{\ }}$
-
+$`{\widehat{y}}_{t}^{\ } = \sum_{i}^{}{\omega_{i}{\widehat{y}}_{i,t}^{\ }}`$
 We calculate weights in four different ways to generate four different
 ensemble forecasts. Three of the ways were calculated by normalizing the
 inverse of a performance metric, $p_{i}$ , of each model:
