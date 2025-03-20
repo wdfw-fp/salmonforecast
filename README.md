@@ -78,7 +78,7 @@ forecast<-do_forecast(
   exp_smooth_alpha = 0
 )
 #> [1] "There are 12 models to fit! Fitting model number:"
-#> Time difference of 26.20035 secs
+#> Time difference of 23.56814 secs
 ```
 
 ``` r
@@ -1882,6 +1882,9 @@ forecast$plots_and_tables$Figure3
 ```
 
 <img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
+
+For another example, see the [2025 OPIH coho
+forecast](https://github.com/wdfw-fp/OPI-H-Forecast-Evaluation-2023/blob/2025_forecast/OPI_Coho_preseason_all%20years.Rmd)
 
 ## Description of modeling process
 
