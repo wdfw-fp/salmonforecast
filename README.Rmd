@@ -204,6 +204,8 @@ means) of the $M\, = \, 10\ $models with the lowest MAPE.
 
 *Eq. 6.*
 $`{\widehat{y}}_{t}^{\ } = \sum_{i}^{}{\omega_{i}{\widehat{y}}_{i,t}^{\ }}`$
+
+
 We calculate weights in four different ways to generate four different
 ensemble forecasts. Three of the ways were calculated by normalizing the
 inverse of a performance metric, $p_{i}$ , of each model:

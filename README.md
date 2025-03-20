@@ -78,7 +78,7 @@ forecast<-do_forecast(
   exp_smooth_alpha = 0
 )
 #> [1] "There are 12 models to fit! Fitting model number:"
-#> Time difference of 23.32844 secs
+#> Time difference of 26.20035 secs
 ```
 
 ``` r
@@ -2009,6 +2009,7 @@ means) of the $M\, = \, 10\ $models with the lowest MAPE.
 
 *Eq. 6.*
 $`{\widehat{y}}_{t}^{\ } = \sum_{i}^{}{\omega_{i}{\widehat{y}}_{i,t}^{\ }}`$
+
 We calculate weights in four different ways to generate four different
 ensemble forecasts. Three of the ways were calculated by normalizing the
 inverse of a performance metric, $p_{i}$ , of each model:
