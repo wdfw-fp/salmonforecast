@@ -20,6 +20,7 @@
 plot_table<-function(
     rp,
     ens,
+    dat,
     stack_metric,
     rolling_year_window,
     benchmark=NULL,

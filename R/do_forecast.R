@@ -127,6 +127,7 @@ do_forecast<-function(
   plots_and_tables<- plot_table(
     rp=rp,
     ens=ens,
+    dat=dat,
     stack_metric=stack_metric,
     rolling_year_window=TY_ensemble-1
   )
