@@ -78,7 +78,7 @@ forecast<-do_forecast(
   exp_smooth_alpha = 0
 )
 #> [1] "There are 12 models to fit! Fitting model number:"
-#> Time difference of 23.56814 secs
+#> Time difference of 15.61379 secs
 ```
 
 ``` r
@@ -2064,3 +2064,25 @@ Software, 26(3), 1–22. <doi:10.18637/jss.v027.i03>.
 
 Smyth, P., and Wolpert, D., 1999. Linearly combining density estimators
 via stacking. Machine Learning, 36, pp.59-83.
+
+Copyright (c) 2023 Mark Sorel \[aut, cre\], Thomas Buehrens \[aut\],
+Xiaotian Yuan \[aut\]
+
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files (the
+“Software”), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS,” WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
