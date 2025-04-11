@@ -102,7 +102,7 @@ do_forecast<-function(
                      function(x) paste(x,collapse = " + "))%>%
     unlist()%>%
     dplyr::as_tibble()%>%
-    dplyr::add_rownames()%>%
+    tibble::rownames_to_column()%>%
     dplyr::rename(model=rowname,model_name=value)
 
   # rolling performance / ensemble
@@ -115,7 +115,7 @@ do_forecast<-function(
                    alpha=exp_smooth_alpha)
 
 
-  ens<-ensemble(forecasts=(rp$all_mods %<>% dplyr::group_by(year) %>% dplyr::mutate(rank=rank(MAPE)) %>% dplyr::ungroup()),
+  ens<-ensemble(forecasts=(rp$all_mods %<>% dplyr::group_by(year) %>% dplyr::mutate(rank=rank(MAPE)) %>% dplyr::ungroup()) |> dplyr::select(year:aicc,`Lo 50`:rank),
                 series=dat,
                 TY_ensemble=TY_ensemble,
                 k=k,
