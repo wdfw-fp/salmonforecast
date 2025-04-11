@@ -67,7 +67,8 @@ do_forecast<-function(
     n_cores=2,
     ts_freq=1,
     seasonal=FALSE,
-    exp_smooth_alpha=0
+    exp_smooth_alpha=0,
+    include_mod
 
 
 ){
@@ -92,7 +93,7 @@ do_forecast<-function(
                           n_cores=n_cores,
                           ts_freq=ts_freq,
                           seasonal=seasonal,
-
+                          include_mod=include_mod
   )
 
 
