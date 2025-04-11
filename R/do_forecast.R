@@ -115,7 +115,7 @@ do_forecast<-function(
                    alpha=exp_smooth_alpha)
 
 
-  ens<-ensemble(forecasts=(rp$all_mods %<>% dplyr::group_by(year) %>% dplyr::mutate(rank=rank(MAPE)) %>% dplyr::ungroup()) |> dplyr::select(year:aicc,`Lo 50`:rank)|> dplyr::mutate(dplyr::across(dplyr::where(is.list), ~ as.character(.x))),
+  ens<-ensemble(forecasts=(rp$all_mods %<>% dplyr::group_by(year) %>% dplyr::mutate(rank=rank(MAPE)) %>% dplyr::ungroup()) |> dplyr::select(year:aicc,`Lo 50`:rank),
                 series=dat,
                 TY_ensemble=TY_ensemble,
                 k=k,
@@ -124,7 +124,7 @@ do_forecast<-function(
                 stack_metric="MAPE",
                 do_stacking=do_stacking,
                 alpha=exp_smooth_alpha)
-  #plot and table
+  # plot and table
   plots_and_tables<- plot_table(
     rp=rp,
     ens=ens,
