@@ -24,6 +24,7 @@
 #' @import foreach
 #' @importFrom dplyr select filter mutate ungroup pull bind_cols left_join rename bind_rows %>%
 #' @importFrom utils write.table tail
+#' @importFrom doRNG %dorng%
 #' @import forecast
 one_step_ahead <- function(series,
                            leave_yrs,
@@ -48,7 +49,6 @@ one_step_ahead <- function(series,
   }
 
 
-  forecasts<-NULL
   filtered_series<-series%>%
     ungroup()%>%
     dplyr::select(year,species,period,abundance,all_of(unique(unlist(covariates))))%>%
@@ -63,8 +63,13 @@ one_step_ahead <- function(series,
   #cl <- makeCluster(parallel::detectCores() - 3)
   cl <- makeCluster(n_cores)
   registerDoParallel(cl)
-  forecasts_out <- foreach::foreach(i = 1:leave_yrs, .combine = 'rbind', .packages = c("forecast")) %dopar% {
 
+  set.seed(123)
+  out <- foreach::foreach(i = 1:leave_yrs, .combine = 'rbind', .packages = c("forecast")) %dorng% {
+
+
+
+    forecasts_out<-NULL
     i <- i  # Define 'i' within the foreach loop
     for (c in 1:length(covariates)) {
       last_train_yr <- max(filtered_series$year) - (leave_yrs - i + 1)
@@ -115,9 +120,9 @@ one_step_ahead <- function(series,
 
 
           if (c == 1) {
-            forecasts <- tdat
+            forecasts_out <- tdat
           } else {
-            forecasts <- forecasts %>% dplyr::bind_rows(tdat)
+            forecasts_out <- forecasts_out %>% dplyr::bind_rows(tdat)
           }
 
 
@@ -134,11 +139,11 @@ one_step_ahead <- function(series,
           print(paste("Error in ARIMA model for covariate", c, "- Skipping:", e$message))
         })
     }
-    return(forecasts)
+    return(forecasts_out)
   }
 
   stopCluster(cl)
 
   print((Sys.time() - start))
-  return(forecasts_out)
+  return(out)
 }
