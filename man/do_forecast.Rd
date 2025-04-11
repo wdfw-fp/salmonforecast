@@ -26,7 +26,7 @@ do_forecast(
   ts_freq = 1,
   seasonal = FALSE,
   exp_smooth_alpha = 0,
-  include_mod
+  include_mod = FALSE
 )
 }
 \arguments{
