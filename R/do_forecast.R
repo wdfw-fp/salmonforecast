@@ -115,7 +115,7 @@ do_forecast<-function(
                    alpha=exp_smooth_alpha)
 
 
-  ens<-ensemble(forecasts=(rp$all_mods %<>% dplyr::group_by(year) %>% dplyr::mutate(rank=rank(MAPE)) %>% dplyr::ungroup()) |> dplyr::select(year:aicc,`Lo 50`:rank),
+  ens<-ensemble(forecasts=(rp$all_mods %<>% dplyr::group_by(year) %>% dplyr::mutate(rank=rank(MAPE)) %>% dplyr::ungroup()) |> dplyr::select(year:aicc,`Lo 50`:rank)|> dplyr::mutate(dplyr::across(dplyr::where(is.list), ~ as.character(.x))),
                 series=dat,
                 TY_ensemble=TY_ensemble,
                 k=k,

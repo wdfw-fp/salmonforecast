@@ -113,7 +113,7 @@ max_year<-i
     tdat <- tdat %>%
       dplyr::left_join(stacking_weights)
     }else{
-         tdat <-tdat |> mutate(Stacking_weight=1)
+         tdat <-tdat |> dplyr::mutate(Stacking_weight=1)
     }
 
 
@@ -196,7 +196,7 @@ max_year<-i
   }
 
   forecast_skill <- evaluate_forecasts2(
-    forecasts = dplyr::bind_rows(forecasts, ensembles %>%
+    forecasts = dplyr::bind_rows(forecasts , ensembles %>%
                                    dplyr::left_join(series)) %>%
       dplyr::filter(year > (yrrange[2] - TY_ensemble)),
     observations = series
