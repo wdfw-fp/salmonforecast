@@ -35,6 +35,7 @@ Imports:
     knitr,
     kableExtra,
     ggplot2,
-    rvest
+    rvest,
+    doRNG
 LazyData: true
 VignetteBuilder: knitr
