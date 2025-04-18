@@ -65,12 +65,18 @@ one_step_ahead <- function(series,
   registerDoParallel(cl)
 
   set.seed(123)
-  out <- foreach::foreach(i = 1:leave_yrs, .combine = 'rbind', .packages = c("forecast")) %dorng% {
+  out<-foreach::foreach(i = 1:leave_yrs, .combine = 'rbind',
+                   .packages = c("forecast", "dplyr", "tibble", "SalmonForecasting")) %dorng% {
 
 
 
     forecasts_out<-NULL
     i <- i  # Define 'i' within the foreach loop
+
+    message("Starting loop i = ", i)
+
+
+
     for (c in 1:length(covariates)) {
       last_train_yr <- max(filtered_series$year) - (leave_yrs - i + 1)
       tdat <- filtered_series %>%
@@ -95,7 +101,7 @@ one_step_ahead <- function(series,
       # Use tryCatch to handle potential errors during ARIMA model fitting
       tryCatch(
         {
-          temp <- arima_forecast(tdat, xreg, xreg_pred, last_train_yr, first_forecast_period,freq=ts_freq,seasonal=seasonal)
+          temp <- SalmonForecasting:::arima_forecast(tdat, xreg, xreg_pred, last_train_yr, first_forecast_period,freq=ts_freq,seasonal=seasonal)
           pred <- temp$pred %>% tail(1)
           CI <- temp$CI
 
@@ -127,7 +133,7 @@ one_step_ahead <- function(series,
 
 
           # Calculate performance metrics using the new function
-          performance_metrics <- calculate_performance_metrics(pred, tdat$abundance)
+          performance_metrics <- SalmonForecasting:::calculate_performance_metrics(pred, tdat$abundance)
 
           # Append performance metrics to the data frame
           tdat <- tdat %>%
