@@ -59,15 +59,10 @@ one_step_ahead <- function(series,
       )
     )
 
-  print("Before filtering series")
-  print(head(filtered_series))
-
 
   #cl <- makeCluster(parallel::detectCores() - 3)
   cl <- makeCluster(n_cores)
   registerDoParallel(cl)
-
-  registerDoSEQ()
 
   set.seed(123)
   out<-foreach::foreach(i = 1:leave_yrs, .combine = 'rbind',
@@ -78,13 +73,10 @@ one_step_ahead <- function(series,
     forecasts_out<-NULL
     i <- i  # Define 'i' within the foreach loop
 
-  print(i)
 
 
 
     for (c in 1:length(covariates)) {
-
-      print(c)
       last_train_yr <- max(filtered_series$year) - (leave_yrs - i + 1)
       tdat <- filtered_series %>%
         dplyr::filter(year <= (last_train_yr + 1)) %>%
@@ -126,7 +118,7 @@ one_step_ahead <- function(series,
               eq=temp$eq))
           }
 
-print(tdat)
+
           tdat<-tdat %>%
             dplyr::left_join(CI, by = c("year", "period")) %>%
             dplyr::mutate(model = as.character(c))

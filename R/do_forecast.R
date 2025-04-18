@@ -79,9 +79,6 @@ do_forecast<-function(
   #find all subsets
   best_covariates<-all_subsets(series=dat,covariates=covariates,min=min_vars,max=max_vars,type=forecast_type,fit=FALSE)
 
-
-print(best_covariates)
-
   #generate one step ahead forecasts
   results<-one_step_ahead(series=dat,
                           leave_yrs=leave_yrs,
@@ -108,8 +105,6 @@ print(best_covariates)
     tibble::rownames_to_column()%>%
     dplyr::rename(model=rowname,model_name=value)
 
-
-  print(results)
   # rolling performance / ensemble
   rp<-rolling_perf(one_aheads=results,
                    series=dat,
