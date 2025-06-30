@@ -21,6 +21,7 @@ do_forecast(
   min_vars = 0,
   max_vars = 1,
   forecast_type = "preseason",
+  screen_metric = AICc,
   num_models = 25,
   n_cores = 2,
   ts_freq = 1,
