@@ -17,6 +17,7 @@
 #' @param min_vars Minimum number of covariates in a model.
 #' @param max_vars Maximum number of covariates in a model.
 #' @param forecast_type Type of forecasting approach ("preseason" or other).
+#' @param screen_metric the metric used to rank and screen top models. options are MAPE or aicc
 #' @param num_models Number of top models to consider in ensemble creation.
 #' @param alpha the annual rate of decay per year used in weighting performance in metric  calculation for model selection and ensemble-weights
 #' @param ts_freq frequency for time series (generally 1)
@@ -63,6 +64,7 @@ do_forecast<-function(
     min_vars=0,
     max_vars=1,
     forecast_type="preseason",
+    screen_metric=AICc,
     num_models=25,
     n_cores=2,
     ts_freq=1,
@@ -98,7 +100,7 @@ do_forecast<-function(
 
 
   ## not sure if we need this? if not, get rid of it, if so, let's wrap it into one of the existing function (e.g., one_step_ahead)
-  model_list<-lapply(best_covariates[[1]],#[best_covariates[[2]]$model_num[1:num_models]],
+  model_list<-lapply(best_covariates[[1]],
                      function(x) paste(x,collapse = " + "))%>%
     unlist()%>%
     dplyr::as_tibble()%>%
@@ -109,6 +111,7 @@ do_forecast<-function(
   rp<-rolling_perf(one_aheads=results,
                    series=dat,
                    roll_years = TY_ensemble-1,
+                   screen_metric=screen_metric,
                    mod_include = num_models,
                    TY_ensemble = TY_ensemble,
                    model_list = model_list,

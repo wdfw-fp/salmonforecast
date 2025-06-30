@@ -73,9 +73,6 @@ one_step_ahead <- function(series,
     forecasts_out<-NULL
     i <- i  # Define 'i' within the foreach loop
 
-
-
-
     for (c in 1:length(covariates)) {
       last_train_yr <- max(filtered_series$year) - (leave_yrs - i + 1)
       tdat <- filtered_series %>%
