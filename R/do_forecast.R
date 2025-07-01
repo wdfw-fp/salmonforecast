@@ -13,6 +13,7 @@
 #' @param forecast_period_start_m Starting month of the forecast period (inclusive).
 #' @param forecast_period_start_d Starting day of the forecast period (inclusive).
 #' @param stack_metric The metric used for stacking models in the ensemble.
+#' @param num_stack_it max number of iterations to run stacking algorithm
 #' @param k Number of top models to include in the ensemble.
 #' @param min_vars Minimum number of covariates in a model.
 #' @param max_vars Maximum number of covariates in a model.
@@ -64,13 +65,14 @@ do_forecast<-function(
     min_vars=0,
     max_vars=1,
     forecast_type="preseason",
-    screen_metric=AICc,
+    screen_metric=aicc,
     num_models=25,
     n_cores=2,
     ts_freq=1,
     seasonal=FALSE,
     exp_smooth_alpha=0,
-    include_mod=FALSE
+    include_mod=FALSE,
+    num_stack_it=500
 
 
 ){
@@ -111,14 +113,14 @@ do_forecast<-function(
   rp<-rolling_perf(one_aheads=results,
                    series=dat,
                    roll_years = TY_ensemble-1,
-                   screen_metric=screen_metric,
+                   screen_metric={{screen_metric}},
                    mod_include = num_models,
                    TY_ensemble = TY_ensemble,
                    model_list = model_list,
                    alpha=exp_smooth_alpha)
 
 
-  ens<-ensemble(forecasts=(rp$all_mods %<>% dplyr::group_by(year) %>% dplyr::mutate(rank=rank(MAPE)) %>% dplyr::ungroup()) |> dplyr::select(year:aicc,`Lo 50`:rank),
+  ens<-ensemble(forecasts=(rp$all_mods %<>% dplyr::group_by(year) %>% dplyr::mutate(rank=rank({{screen_metric}})) %>% dplyr::ungroup()) |> dplyr::select(year:aicc,`Lo 50`:rank),
                 series=dat,
                 TY_ensemble=TY_ensemble,
                 k=k,
@@ -126,7 +128,8 @@ do_forecast<-function(
                 num_models=num_models,
                 stack_metric="MAPE",
                 do_stacking=do_stacking,
-                alpha=exp_smooth_alpha)
+                alpha=exp_smooth_alpha,
+                num_stack_it=num_stack_it)
   # plot and table
   plots_and_tables<- plot_table(
     rp=rp,

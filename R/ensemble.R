@@ -19,7 +19,7 @@
 #' @importFrom dplyr summarise filter left_join select mutate group_by arrange bind_rows ungroup pull
 #' @importFrom MCMCpack rdirichlet
 #' @export
-ensemble <- function(forecasts, series, TY_ensemble, k, min_ens_yrs=5, slide, num_models, stack_metric, stretch = FALSE,do_stacking=TRUE,alpha=0) {
+ensemble <- function(forecasts, series, TY_ensemble, k, min_ens_yrs=5, slide, num_models, stack_metric, stretch = FALSE,do_stacking=TRUE,alpha=0,num_stack_it=500) {
 
   yrrange <- forecasts %>%
     dplyr::summarise(minyr = min(year), maxyr = max(year)) %>%
@@ -56,30 +56,34 @@ max_year<-i
       ) %>%
       dplyr::filter(year %in% years) %>%
       dplyr::left_join(series, by = "year") %>%
-      dplyr::select(year, model, predicted_abundance, abundance = abundance.x) %>%
+      dplyr::select(year, model, predicted_abundance, abundance = abundance.x,aicc) %>%
       dplyr::ungroup() |>
       dplyr::mutate(error = abundance - predicted_abundance,
                     year_dif=max_year-year+1,
                     exp_smooth_weight=if(alpha!=0){(1-alpha)^year_dif}else{1}) %>%
       dplyr::filter(!is.na(error)) %>%
+      dplyr::arrange(year) |>
       dplyr::group_by(model) %>%
       dplyr::summarize(RMSE = sqrt(weighted.mean(error^2,exp_smooth_weight)),
                        MAPE = weighted.mean(abs(error / abundance),exp_smooth_weight),
                        ,
-                       MSA = 100 * (exp(weighted.mean(abs(log(abundance / predicted_abundance)),exp_smooth_weight)) - 1)
+                       MSA = 100 * (exp(weighted.mean(abs(log(abundance / predicted_abundance)),exp_smooth_weight)) - 1),
+                       aicc=tail(aicc,1)
       ) %>%
       dplyr::arrange(MSA) %>%
       dplyr::mutate(MSA_weight = (1 / MSA)^k / sum((1 / MSA)^k),
                     RMSE_weight = (1 / RMSE)^k / sum((1 / RMSE)^k),
-                    MAPE_weight = (1 / MAPE)^k / sum((1 / MAPE)^k)
+                    MAPE_weight = (1 / MAPE)^k / sum((1 / MAPE)^k),
+                    AICc_weight = exp(-.5*(aicc-min(aicc)))/
+                      sum(exp(-.5*(aicc-min(aicc)))),
+                    equal_weight = 1/dplyr::n(),
       )
 
-    modelcnt <- num_models
 
 
     if(do_stacking){
 
-      stackdat <- forecasts %>%
+      stackdat <- forecasts %>% dplyr::ungroup() |>
       dplyr::filter(
         model %in% c(forecasts %>%
                        dplyr::filter(year == i + 1, rank <= num_models) %>%
@@ -92,11 +96,10 @@ max_year<-i
 
 
 
-
     stack_weights <- find_stack_weights(tau = 1,
-                                        n = 10000,
+                                        n = num_stack_it,
                                         metric = stack_metric,
-                                        initial_weights = rep(1 / modelcnt, modelcnt),
+                                        initial_weights = rep(1 / (ncol(stackdat)-2), (ncol(stackdat)-2)),
                                         preds = stackdat %>%
                                           dplyr::filter(!is.na(abundance)) %>%
                                           dplyr::select(!abundance & !year) %>%
@@ -131,16 +134,21 @@ max_year<-i
       dplyr::mutate(MSA_weighted = value * MSA_weight,
                     RMSE_weighted = value * RMSE_weight,
                     MAPE_weighted = value * MAPE_weight,
+                    AICc_weighted = value * AICc_weight,
+                    Equal_weighted = value * equal_weight,
                     Stack_weighted = value * Stacking_weight
       ) %>%
       dplyr::group_by(year, Parameter) %>%
       dplyr::summarise(MSA_weighted = sum(MSA_weighted),
                        RMSE_weighted = sum(RMSE_weighted),
                        MAPE_weighted = sum(MAPE_weighted),
+                       AICc_weighted = sum(AICc_weighted),
+                       Equal_weighted = sum(Equal_weighted),
                        Stack_weighted = sum(Stack_weighted)
+
       ) %>%
       tidyr::pivot_longer(names_to = "model",
-                          cols = c("MSA_weighted", "RMSE_weighted", "MAPE_weighted", "Stack_weighted"),
+                          cols = c("MSA_weighted", "RMSE_weighted", "MAPE_weighted", "AICc_weighted", "Equal_weighted", "Stack_weighted"),
                           values_to = "value") %>%
       tidyr::pivot_wider(id_cols = c("year", "model"), names_from = Parameter, values_from = value)
 
