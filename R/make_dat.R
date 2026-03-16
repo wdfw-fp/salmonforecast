@@ -27,6 +27,7 @@ make_dat <- function(dat1,
   ,"lag2_PC2"
   ,"lag2_sp_phys_trans"
   ,"pink_ind"
+
   ,"lag1_log_socksmolt" # sockeye smolts
 )) {
 
@@ -112,7 +113,7 @@ make_dat <- function(dat1,
       #=========================================
       # Get ENSO index
       #=========================================
-      enso<-read_table("https://psl.noaa.gov/gcos_wgsp/Timeseries/Data/nino34.long.anom.data",skip=1,col_names = F)%>%
+      enso<-read_table("https://psl.noaa.gov/data/timeseries/month/data/nino34.long.anom.data",skip=1,col_names = F)%>%
         as_tibble()%>%
         setNames(c("year",1:12))%>%
         # filter(year%in%as.character(yr_start:yr_end))%>%
