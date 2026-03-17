@@ -24,6 +24,9 @@
 #' @param ts_freq frequency for time series (generally 1)
 #' @param seasonal whether the arima models should include seasonal  components
 #' @param n_cores number of cores to use in parallel computing
+#' @param supplied_forecasts a dataframe of forecasts to be used *instead* of fitting specified models
+#' @param update_last_year refit only the models with the full dataset used to predict the upcoming year.
+#'
 #'
 #' @return A list containing tables and plots summarizing the forecasting results and a list containing various outputs, including selected covariates, forecast results, rolling performance, ensemble models, and plots/tables.
 #'
@@ -72,7 +75,9 @@ do_forecast<-function(
     seasonal=FALSE,
     exp_smooth_alpha=0,
     include_mod=FALSE,
-    num_stack_it=500
+    num_stack_it=500,
+    supplied_forecasts=NULL,
+    update_last_year=FALSE
 
 
 ){
@@ -84,6 +89,12 @@ do_forecast<-function(
   best_covariates<-all_subsets(series=dat,covariates=covariates,min=min_vars,max=max_vars,type=forecast_type,fit=FALSE)
 
   #generate one step ahead forecasts
+  if(is.null(supplied_forecasts)|update_last_year){
+
+    if(update_last_year){
+      leave_yrs<-2
+    }
+
   results<-one_step_ahead(series=dat,
                           leave_yrs=leave_yrs,
                           TY_ensemble=TY_ensemble,
@@ -99,6 +110,14 @@ do_forecast<-function(
                           seasonal=seasonal,
                           include_mod=include_mod
   )
+
+  if(update_last_year){
+    results<-dplyr::bind_rows(supplied_forecasts,results)
+  }
+
+  }else{
+    results<-supplied_forecasts
+  }
 
 
   ## not sure if we need this? if not, get rid of it, if so, let's wrap it into one of the existing function (e.g., one_step_ahead)
@@ -142,6 +161,7 @@ do_forecast<-function(
   return(list(
     best_covariates = best_covariates,
     results = results,
+    model_list=model_list,
     rp = rp,
     ens=ens,
     plots_and_tables = plots_and_tables
