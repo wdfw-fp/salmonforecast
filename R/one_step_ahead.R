@@ -53,9 +53,9 @@ one_step_ahead <- function(series,
     ungroup()%>%
     dplyr::select(year,species,period,abundance,all_of(unique(unlist(covariates))))%>%
     filter(
-      dplyr::across(
-        .cols = all_of(unique(unlist(covariates))),
-        .fns = ~ !is.na(.x)
+      if_all(
+        all_of(unique(unlist(covariates))),
+        ~ !is.na(.x)
       )
     )
 
